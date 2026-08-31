@@ -1,0 +1,10 @@
+interface:
+  display_name: "Vibe Developer Platform"
+  short_description: "Build and operate Vibe partner integrations"
+  icon_small: "./assets/vibe-co-logo.jpg"
+  icon_large: "./assets/vibe-co-logo.jpg"
+  brand_color: "#4F46E5"
+  default_prompt: "Use $vibeco to help me build a Vibe Developer Platform integration."
+
+policy:
+  allow_implicit_invocation: true

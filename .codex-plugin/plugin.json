@@ -1,0 +1,41 @@
+{
+  "name": "vibeco",
+  "version": "0.1.0",
+  "description": "Build and operate partner integrations for the Vibe Developer Platform.",
+  "author": {
+    "name": "Vibe.co",
+    "url": "https://www.vibe.co/"
+  },
+  "homepage": "https://developers.vibe.co/",
+  "keywords": [
+    "vibe",
+    "developer-platform",
+    "oauth",
+    "advertising",
+    "reporting",
+    "audiences"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Vibe Developer Platform",
+    "shortDescription": "Build and operate Vibe partner integrations",
+    "longDescription": "Create Vibe apps, implement OAuth, use the API and vibeco CLI, and build reporting or audience integrations.",
+    "developerName": "Vibe.co",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://developers.vibe.co/",
+    "privacyPolicyURL": "https://www.vibe.co/legal/privacy-policy",
+    "termsOfServiceURL": "https://www.vibe.co/legal/terms-of-service",
+    "defaultPrompt": [
+      "Help me build a Vibe Developer Platform integration.",
+      "Add Vibe OAuth and reporting to this application.",
+      "Prepare a safe Vibe audience synchronization workflow."
+    ],
+    "brandColor": "#4F46E5",
+    "composerIcon": "./skills/vibeco/assets/vibe-co-logo.jpg",
+    "logo": "./skills/vibeco/assets/vibe-co-logo.jpg"
+  }
+}
