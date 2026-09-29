@@ -36,7 +36,7 @@ Before forming the command, copy the exact operation name and parameter schema f
 
 - Run authenticated read-only calls when they are directly requested and the identity is clear.
 - For any live write, stop after preparing the exact command and sanitized body. Preview the target and side effect, then obtain confirmation before running it.
-- Do not run or provide ready-to-run deletion calls in this first version.
+- Do not run or provide ready-to-run deletion calls in this skill.
 - Successful output is JSON on stdout. CLI failures are structured on stderr with a non-zero exit code; report the safe classification without leaking credentials.
 
 ## Direct REST baseline
@@ -53,7 +53,11 @@ curl https://api.vibe.co/accounts \
 
 Keep `VIBE_ACCESS_TOKEN` out of command output, committed files, and examples. Do not use `-v`, shell tracing, or copied request dumps around credentials.
 
-List endpoints use basic `limit` and `offset` pagination where documented. Implement only the pagination needed for the request; this first version does not prescribe a generalized backfill or retry framework.
+Resolve the scope an operation needs from its reference page or the documentation index entry instead of guessing; a `403` usually means the app or installation lacks it.
+
+The legacy `X-API-Key` header of the older Reporting API is being retired. When a partner still uses it, read the live migration guide and move them to a Bearer token; see [choosing-an-app.md](choosing-an-app.md).
+
+List endpoints use basic `limit` and `offset` pagination where documented. Implement only the pagination needed for the request; this skill does not prescribe a generalized backfill or retry framework.
 
 ## Capability order
 
