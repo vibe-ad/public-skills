@@ -11,6 +11,7 @@ Resolve these pages through `https://developers.vibe.co/llms.txt` before acting:
 - `https://developers.vibe.co/docs/start-your-client-credentials-flow.md`
 - `https://developers.vibe.co/docs/universal-authorization.md`
 - `https://developers.vibe.co/docs/api-versioning.md`
+- `https://developers.vibe.co/docs/submit-app-for-review-and-marketplace-listing.md`
 
 The live pages win over this reference if details change.
 
@@ -23,6 +24,7 @@ Walk the partner through these steps in order, starting at the first one that is
 3. **Developer terms.** On the first visit, that page shows a blocking developer terms dialog. The account user accepts it personally; do not accept terms for them, even with browser control. Then select **Create app**.
 4. **App details.** Fill in the information the form asks for. Settle the authentication method with [choosing-an-app.md](choosing-an-app.md) beforehand, and request only the minimum scopes (see below).
 5. **Credentials.** On creation, the app's `client_id` and `client_secret` become available. Have the user store them directly in their server-side secret store. Do not copy the secret into chat, screenshots, source files, shell history, or notes. If the secret is lost or may have leaked, regenerate it from the app rather than asking the user to recover it, and replace it wherever it is stored: the previous secret stops working.
+6. **Approval.** The new app is private and works only on the partner's own account. When other customers will connect to it, the app must be made public and approved through Vibe's review before they can: follow `https://developers.vibe.co/docs/submit-app-for-review-and-marketplace-listing.md` once the integration works end to end. Submitting for review is a live action and follows the same preview rule.
 
 Before the final create, update, or secret-regeneration action, preview the information entered, including the authentication method and the requested scopes with a one-line justification for each.
 

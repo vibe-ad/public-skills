@@ -18,6 +18,8 @@ Recommend **OAuth** for any app that other customers connect their Vibe account 
 
 Recommend **API key** when the app only serves its owner on their own Vibe account: it fully does the job there and is the simplest option, with no redirect or consent to build. Also recommend it when the partner's product already collects customer keys and cannot or will not host an OAuth redirect.
 
+Every app starts private and works only on the partner's own Vibe account. Before any other customer can connect to it, with either method, the app must be made public and approved through Vibe's review. Tell the partner this before they build, and read `https://developers.vibe.co/docs/submit-app-for-review-and-marketplace-listing.md` for the requirements.
+
 Do not reduce the choice to "a user is present" versus "server to server". An OAuth integration also runs unattended in the background after the one-time consent, using its refresh tokens. What matters is how each customer grants access.
 
 ## Legacy API keys are a different system
