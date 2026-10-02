@@ -19,6 +19,8 @@ Read only the references needed for the current task:
 
 Combine references only when the request genuinely spans those workflows.
 
+To map a partner's existing data model onto Vibe entities before coding, with a field-by-field table and batched open questions, use the `vibeco-developers-schema-mapping` skill.
+
 ## Resolve the live contract
 
 Treat Vibe's live documentation and OpenAPI schema as the source of truth because endpoints and revisions evolve.
