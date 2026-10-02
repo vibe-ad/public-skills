@@ -1,0 +1,260 @@
+{
+  "_about": "Fictional fixture. Kestrel Media Group is an imaginary US performance agency running paid media for DTC brands. Its internal 'Kestrel Hub' mirrors the Meta/Google object model, and it forwards spend to Northbeam through the real Northbeam Spend API (campaign / adset / ad levels).",
+  "entities": {
+    "Client": {
+      "description": "A brand the agency manages.",
+      "fields": {
+        "id": "string",
+        "name": "string",
+        "website": "url",
+        "vertical": "enum[beauty, apparel, food, saas, ...]"
+      }
+    },
+    "Campaign": {
+      "description": "Top-level object. Budget lives HERE (campaign budget optimization, CBO).",
+      "fields": {
+        "id": "string",
+        "client_id": "string",
+        "name": "string",
+        "objective": "enum[CONVERSIONS, REACH, VIDEO_VIEWS, TRAFFIC]",
+        "optimization_event": "enum[PURCHASE, ADD_TO_CART, LEAD]",
+        "budget": {
+          "type": "enum[daily, lifetime]",
+          "amount": "decimal",
+          "currency": "ISO-4217"
+        },
+        "target_roas": "decimal | null",
+        "start_date": "date",
+        "end_date": "date | null",
+        "status": "enum[draft, active, paused, ended]"
+      }
+    },
+    "AdSet": {
+      "description": "Targeting container. No budget when the parent campaign uses CBO.",
+      "fields": {
+        "id": "string",
+        "campaign_id": "string",
+        "name": "string",
+        "include_segment_ids": "string[]",
+        "exclude_segment_ids": "string[]",
+        "geo": {
+          "countries": "string[]",
+          "dmas": "string[]"
+        },
+        "age_min": "int",
+        "age_max": "int",
+        "genders": "enum[all, female, male]",
+        "interests": "string[]",
+        "bid_strategy": "enum[lowest_cost, cost_cap, roas_floor]",
+        "frequency_cap": {
+          "impressions": "int",
+          "per_days": "int"
+        }
+      }
+    },
+    "Ad": {
+      "description": "One asset placed in one ad set. Same asset reused in two ad sets = two Ads.",
+      "fields": {
+        "id": "string",
+        "ad_set_id": "string",
+        "asset_id": "string",
+        "name": "string",
+        "landing_url": "url",
+        "utm_template": "string (e.g. utm_source=meta&utm_campaign={{campaign.name}}&utm_content={{ad.name}})",
+        "status": "enum[active, paused]"
+      }
+    },
+    "Asset": {
+      "description": "Creative library item, shared across campaigns.",
+      "fields": {
+        "id": "string",
+        "client_id": "string",
+        "type": "enum[video, image, carousel, html5]",
+        "file_url": "url",
+        "file_format": "enum[mp4, mov, jpg, png]",
+        "duration_s": "int | null",
+        "width": "int",
+        "height": "int",
+        "aspect_ratio": "enum[16:9, 9:16, 1:1, 4:5]"
+      }
+    },
+    "Segment": {
+      "description": "Audience. Called 'segment' internally.",
+      "fields": {
+        "id": "string",
+        "client_id": "string",
+        "name": "string",
+        "source": "enum[crm_upload, pixel, lookalike]",
+        "identifier_type": "enum[email_sha256, phone_sha256, maid]",
+        "seed_segment_id": "string | null",
+        "size": "int"
+      }
+    },
+    "PerformanceDaily": {
+      "description": "One row per Ad per day. Forwarded nightly to Northbeam Spend API.",
+      "fields": {
+        "date": "date (client timezone)",
+        "ad_id": "string",
+        "spend": "decimal (USD)",
+        "impressions": "int",
+        "clicks": "int",
+        "video_views_3s": "int",
+        "video_p25": "int",
+        "video_p50": "int",
+        "video_p75": "int",
+        "video_p100": "int",
+        "conversions": "int",
+        "revenue": "decimal (USD)",
+        "roas": "decimal",
+        "attribution_setting": "string (default '7d_click_1d_view')"
+      }
+    }
+  },
+  "sample_campaign": {
+    "client": {
+      "id": "cl_lumen",
+      "name": "Lumen Skincare",
+      "website": "https://lumenskin.example",
+      "vertical": "beauty"
+    },
+    "campaign": {
+      "id": "cmp_881",
+      "name": "LUM-Q4-Prospecting",
+      "objective": "CONVERSIONS",
+      "optimization_event": "PURCHASE",
+      "budget": {
+        "type": "lifetime",
+        "amount": 60000,
+        "currency": "USD"
+      },
+      "target_roas": 2.5,
+      "start_date": "2026-11-01",
+      "end_date": "2026-12-31",
+      "status": "draft"
+    },
+    "ad_sets": [
+      {
+        "id": "as_1",
+        "name": "Lookalike buyers",
+        "include_segment_ids": [
+          "seg_lal_buyers"
+        ],
+        "exclude_segment_ids": [
+          "seg_customers_365d"
+        ],
+        "geo": {
+          "countries": [
+            "US"
+          ],
+          "dmas": []
+        },
+        "age_min": 25,
+        "age_max": 54,
+        "genders": "female",
+        "interests": [],
+        "bid_strategy": "roas_floor",
+        "frequency_cap": {
+          "impressions": 3,
+          "per_days": 1
+        }
+      },
+      {
+        "id": "as_2",
+        "name": "Skincare interest W25-44",
+        "include_segment_ids": [],
+        "exclude_segment_ids": [
+          "seg_customers_365d"
+        ],
+        "geo": {
+          "countries": [
+            "US"
+          ],
+          "dmas": [
+            "501",
+            "803"
+          ]
+        },
+        "age_min": 25,
+        "age_max": 44,
+        "genders": "female",
+        "interests": [
+          "skincare",
+          "beauty"
+        ],
+        "bid_strategy": "lowest_cost",
+        "frequency_cap": {
+          "impressions": 3,
+          "per_days": 1
+        }
+      }
+    ],
+    "assets": [
+      {
+        "id": "ast_v30",
+        "type": "video",
+        "file_format": "mp4",
+        "duration_s": 30,
+        "width": 1920,
+        "height": 1080,
+        "aspect_ratio": "16:9"
+      },
+      {
+        "id": "ast_v06_vert",
+        "type": "video",
+        "file_format": "mp4",
+        "duration_s": 6,
+        "width": 1080,
+        "height": 1920,
+        "aspect_ratio": "9:16"
+      },
+      {
+        "id": "ast_static",
+        "type": "image",
+        "file_format": "jpg",
+        "duration_s": null,
+        "width": 1200,
+        "height": 628,
+        "aspect_ratio": "16:9"
+      }
+    ],
+    "ads": [
+      {
+        "id": "ad_11",
+        "ad_set_id": "as_1",
+        "asset_id": "ast_v30"
+      },
+      {
+        "id": "ad_12",
+        "ad_set_id": "as_1",
+        "asset_id": "ast_v06_vert"
+      },
+      {
+        "id": "ad_21",
+        "ad_set_id": "as_2",
+        "asset_id": "ast_v30"
+      },
+      {
+        "id": "ad_22",
+        "ad_set_id": "as_2",
+        "asset_id": "ast_static"
+      }
+    ],
+    "segments": [
+      {
+        "id": "seg_customers_365d",
+        "name": "Purchasers last 365d",
+        "source": "crm_upload",
+        "identifier_type": "email_sha256",
+        "size": 84000
+      },
+      {
+        "id": "seg_lal_buyers",
+        "name": "LAL 3% purchasers",
+        "source": "lookalike",
+        "identifier_type": "email_sha256",
+        "seed_segment_id": "seg_customers_365d",
+        "size": 2100000
+      }
+    ]
+  }
+}

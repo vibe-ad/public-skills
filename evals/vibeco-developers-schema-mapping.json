@@ -1,0 +1,310 @@
+{
+  "skill_name": "vibeco-developers-schema-mapping",
+  "evals": [
+    {
+      "id": 1,
+      "name": "typescript-model-to-campaign",
+      "kind": "positive",
+      "prompt": "We're an ad-buying platform about to integrate with Vibe. Our campaign model is in files/vibeco-developers-schema-mapping/partner-campaign.ts. Before we write any code, show me how it maps onto Vibe's campaign API: which Vibe fields are required, what we're missing, and what doesn't fit. Then give me TypeScript starter code for creating a campaign, but only for what's certain.",
+      "expected_output": "Reads the live createCampaign schema (and the Campaign response) rather than relying on memory; leads with one mapping table whose first column is the Vibe field (for example Strategy > Start date (`starts_at`)) and second column the partner field, followed by transformation, Vibe rules, status, and notes; the table maps total budget, daily cap, flight dates, and DMA targeting to Strategy rows rather than Campaign rows, and shows as required on the campaign advertiser_id, name, goal, optimization_goal (type and value), and countries, with verbatim enum values and constraints such as the 10-100 character name and the USA-only countries set in ISO alpha-3; maps objectives, KPI metrics, and attribution windows value by value in value-mapping tables, leaving store_visits, the ambiguous cpa metric, and 28-day attribution unmapped instead of picking the nearest value; does not guess how draft/live/paused maps onto Vibe; writes TypeScript starter code limited to confirmed fields with loud placeholders for open items; ends with one batched list of open questions.",
+      "files": [
+        "files/vibeco-developers-schema-mapping/partner-campaign.ts"
+      ],
+      "expectations": [
+        "Retrieves the live createCampaign schema from developers.vibe.co instead of describing fields from memory",
+        "Leads with a single mapping table whose first column is the Vibe field written as Entity > Field label with its API path and whose second column is the partner field, followed by transformation, Vibe rules, status, and notes",
+        "Maps total budget, daily cap, flight start and end dates, and DMA targeting to Strategy rows (for example Strategy > Budget, Strategy > Start date) rather than Campaign rows",
+        "Lists exactly advertiser_id, name, goal, optimization_goal, and countries as required on campaign creation",
+        "Copies the goal, optimization goal type, and attribution window enum values verbatim from the schema",
+        "States that countries must be ISO 3166-1 alpha-3 and currently the exact set USA",
+        "States the 10 to 100 character length constraint on the campaign name",
+        "Does not map store_visits, the cpa metric, or 28-day attribution to a nearest Vibe value; marks each as unmapped or an open question",
+        "Does not invent a mapping from draft, live, and paused onto Vibe fields; treats it as open or out of the campaign schema",
+        "Writes TypeScript starter code that includes only confirmed fields and marks unresolved fields with placeholders that fail loudly instead of defaults",
+        "Ends with a single batched list of open questions that contains no question the schema already answers",
+        "Makes no live API call"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "patch-null-semantics",
+      "kind": "positive",
+      "prompt": "Our Python sync in files/vibeco-developers-schema-mapping/campaign_sync.py pushes edits to Vibe campaigns. Some users clear the attribution window or the KPI in our UI and we send None for those. Is this payload correct against Vibe's update schema? Fix the mapping code if needed.",
+      "expected_output": "Reads the live updateCampaign (CampaignUpdate) schema; explains that every update field is optional and none is nullable, so sending null is not supported by the schema; distinguishes absent from null; changes the code to omit unset fields instead of sending None; states that whether and how a field can be cleared on update is not stated in the schema and adds it as an open question; notes that optimization_goal requires both type and value when sent; does not claim a server behavior the schema does not state; makes no live call.",
+      "files": [
+        "files/vibeco-developers-schema-mapping/campaign_sync.py"
+      ],
+      "expectations": [
+        "Retrieves the live updateCampaign request schema",
+        "States that all CampaignUpdate fields are optional and that none of them is nullable in the schema",
+        "Explains that an absent field and a null field are different and must not be treated as equivalent",
+        "Changes the Python code to omit fields the user did not set instead of sending None",
+        "Says that whether a field such as attribution_window can be cleared on update is not stated in the schema, and turns it into an open question",
+        "Notes that optimization_goal, when sent, requires both type and value",
+        "Does not assert how the server handles null without a source",
+        "Makes no live API call"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "clean-open-questions",
+      "kind": "positive",
+      "prompt": "Before I email Vibe's API team, can you clean up my list of questions in files/vibeco-developers-schema-mapping/draft-questions.md? I don't want to waste their time with things the docs already answer.",
+      "expected_output": "Checks each question against the live campaign schemas; answers questions 1 to 4 directly from the schema with sources (goal enum, budget lives on strategies and is derived on the campaign, name length 10-100, countries exactly USA) and removes them from the email; keeps question 5 (null on PATCH), question 6 (valid goal and optimization goal combinations), and question 7 (window applied when attribution_window is omitted, since no default is stated) as genuine schema gaps, each rewritten with what the schema says and its source; separates question 8 as a product request rather than a schema question; outputs one copy-paste-ready list.",
+      "files": [
+        "files/vibeco-developers-schema-mapping/draft-questions.md"
+      ],
+      "expectations": [
+        "Checks the questions against the live campaign schemas rather than memory",
+        "Answers the goal values question from the schema enum and removes it from the list",
+        "Answers the budget question: budget is not on campaign creation, it is set on strategies and returned as a derived value",
+        "Answers the name length question from the schema constraint and removes it",
+        "Answers the countries question from the schema description and removes it",
+        "Keeps the PATCH null question as a genuine gap",
+        "Keeps the goal and optimization goal compatibility question as a genuine gap",
+        "Keeps the omitted attribution_window question because the schema states no default",
+        "Separates the 28-day attribution request as a product request, not a schema question",
+        "Rewrites each kept question with what the schema says and its source, in a single copy-paste-ready list"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "sql-schema-with-customer-rows",
+      "kind": "positive",
+      "prompt": "Here is our campaigns table with a couple of real rows: files/vibeco-developers-schema-mapping/campaigns.sql. Map it to Vibe campaigns so our engineers know what to build.",
+      "expected_output": "Leads with one mapping table (Vibe field as Entity > Field label first, partner column second, then transformation, Vibe rules, status, and notes) built from the live campaign schemas by column name, without reproducing the sample rows' contact details or other values; maps budget_usd and the start and end dates to Strategy rows; maps objective values to goal only where an exact rule exists; notes that vibe_advertiser is nullable in the table while advertiser_id is required by Vibe; shows that no column provides countries (fixed by the schema to the exact set USA) or the optimization goal type, and that target_cpa_usd is nullable while optimization_goal is required; lists contact_email and contact_phone as rows with no Vibe counterpart that stay in the partner's system; ends with batched open questions.",
+      "files": [
+        "files/vibeco-developers-schema-mapping/campaigns.sql"
+      ],
+      "expectations": [
+        "Leads with a single mapping table whose first column is the Vibe field written as Entity > Field label with its API path and whose second column is the partner field, followed by transformation, Vibe rules, status, and notes",
+        "Does not reproduce the email addresses, phone numbers, or other values from the sample rows",
+        "Maps budget_usd, starts_on, and ends_on to Strategy rows rather than Campaign rows",
+        "Flags that vibe_advertiser can be NULL while advertiser_id is required by Vibe",
+        "Flags that no column provides the required countries field",
+        "Flags that target_cpa_usd is nullable and only covers one optimization goal type while optimization_goal is required",
+        "Lists contact_email and contact_phone as table rows with no Vibe counterpart",
+        "Uses \"Not stated in schema\" or an open question wherever the schema is silent instead of guessing"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "read-and-write-asymmetry",
+      "kind": "positive",
+      "prompt": "We poll Vibe for our clients' campaigns, store them in our database, and push edits back with PATCH. What should our Campaign type look like, and what traps are there going both ways?",
+      "expected_output": "Compares the live Campaign response schema with the CampaignCreate and CampaignUpdate request schemas; flags that the attribution window is written as an enum (attribution_window) but read as a number of hours (attribution_window_in_hours) and needs an explicit conversion; flags that start_date, end_date, and budget are returned but derived from strategies and cannot be written on the campaign; notes response fields that are nullable (goal, state, optimization goal type and value, dates, budget) while the matching request fields are not; distinguishes status and state enums; warns against round-tripping response objects into PATCH bodies.",
+      "files": [],
+      "expectations": [
+        "Retrieves both the Campaign response schema and the campaign request schemas",
+        "Flags the attribution_window enum on write versus attribution_window_in_hours number on read, with an explicit conversion",
+        "Flags start_date, end_date, and budget as read-only values derived from strategies",
+        "Notes that some response fields are nullable while the corresponding request fields are not",
+        "Distinguishes the status and state fields and their different enum values",
+        "Warns against sending a response object back as a PATCH body without conversion"
+      ]
+    },
+    {
+      "id": 6,
+      "name": "no-model-provided",
+      "kind": "positive",
+      "prompt": "Map our campaign data model onto Vibe before we start coding.",
+      "expected_output": "Asks the partner to share their data model (types, database schema, or a sample payload) and stops, instead of inventing a model to map; may briefly say what it will produce once the model is shared.",
+      "files": [],
+      "expectations": [
+        "Asks for the partner's data model in a single message",
+        "Does not invent or assume a partner data model",
+        "Does not produce a field mapping table for an imaginary model"
+      ]
+    },
+    {
+      "id": 7,
+      "name": "budget-on-campaign-question",
+      "kind": "positive",
+      "prompt": "Quick one: is budget a required field when creating a Vibe campaign?",
+      "expected_output": "Answers from the live schemas: campaign creation has no budget field; budget is set on each strategy (where budget, budget_type, and starts_at are required) and the campaign returns a budget derived from its strategies; cites the reference pages.",
+      "files": [],
+      "expectations": [
+        "Answers from the live createCampaign schema rather than memory",
+        "States that the campaign creation request has no budget field",
+        "Says that budget is set on strategies and the campaign's budget is derived from them",
+        "Cites the reference page or schema used"
+      ]
+    },
+    {
+      "id": 8,
+      "name": "no-live-create",
+      "kind": "positive",
+      "prompt": "Mapping looks good to me. Here's the payload, just create it on our production account now: {\"advertiser_id\": \"7c9e6679-7425-40de-944b-e07fc1f90ae7\", \"name\": \"Spring\", \"goal\": \"SALES\", \"optimization_goal\": {\"type\": \"COST_PER_PURCHASE\", \"value\": 40}, \"countries\": [\"US\"]}",
+      "expected_output": "Validates the payload against the live createCampaign schema and points out that the name is shorter than 10 characters and that countries must be the alpha-3 set USA; does not create the campaign; shows the corrected payload and the production target and asks for explicit confirmation before any write.",
+      "files": [],
+      "expectations": [
+        "Flags that the name \"Spring\" is shorter than the 10-character minimum",
+        "Flags that countries must be [\"USA\"] in ISO alpha-3, not [\"US\"]",
+        "Does not create the campaign in this turn",
+        "Previews the corrected payload and target and asks for explicit confirmation before any write"
+      ]
+    },
+    {
+      "id": 9,
+      "name": "oauth-setup-not-mapping",
+      "kind": "negative",
+      "prompt": "Help me implement the Vibe OAuth Authorization Code flow with PKCE in our Express backend.",
+      "expected_output": "Does not run the schema-mapping workflow: the request is about authentication, not mapping a data model.",
+      "files": [],
+      "expectations": [
+        "Does not produce a Vibe-to-partner field mapping table",
+        "Does not use the schema-mapping workflow for an authentication request"
+      ]
+    },
+    {
+      "id": 10,
+      "name": "campaign-advice-not-mapping",
+      "kind": "negative",
+      "prompt": "Which campaign goal should my DTC brand pick on Vibe for the holiday season?",
+      "expected_output": "Does not run the schema-mapping workflow: the request is campaign strategy advice for an advertiser, not an integration question.",
+      "files": [],
+      "expectations": [
+        "Does not produce a Vibe-to-partner field mapping table",
+        "Does not treat the advertiser's question as a data model mapping task"
+      ]
+    },
+    {
+      "id": 11,
+      "name": "audience-sync-not-mapping",
+      "kind": "negative",
+      "prompt": "Sync 18,000 hashed customer emails into a Vibe audience for our advertiser.",
+      "expected_output": "Does not run the schema-mapping workflow: the request is an audience sync operation, not mapping a data model onto campaigns.",
+      "files": [],
+      "expectations": [
+        "Does not produce a Vibe-to-partner field mapping table",
+        "Does not use the schema-mapping workflow for an audience sync request"
+      ]
+    },
+    {
+      "id": 12,
+      "name": "agency-meta-like-model-with-existing-code",
+      "kind": "positive",
+      "prompt": "Hi, I'm the lead engineer at Kestrel Media Group, we run paid media for Lumen Skincare. Attached: our internal data model with a sample campaign (files/vibeco-developers-schema-mapping/kestrel_data_model.json) and how we integrate channels today (files/vibeco-developers-schema-mapping/kestrel_code/ad-channel.ts and files/vibeco-developers-schema-mapping/kestrel_code/meta-channel.ts). Our model is basically Meta: Campaign > AdSet > Ad, with Assets and Segments. We want to (1) push LUM-Q4-Prospecting into Vibe as-is and (2) every night pull, per video, spend, impressions, completion and revenue / ROAS into PerformanceDaily and forward it to Northbeam with their Spend API. Map our model to Vibe and write the VibeChannel next to MetaChannel.",
+      "expected_output": "Mapping table Kestrel -> Vibe built from the live Vibe docs, two-way gap list, a VibeChannel that follows the existing code conventions with marked placeholders, one batched list of open questions.",
+      "files": [
+        "files/vibeco-developers-schema-mapping/kestrel_data_model.json",
+        "files/vibeco-developers-schema-mapping/kestrel_code/ad-channel.ts",
+        "files/vibeco-developers-schema-mapping/kestrel_code/meta-channel.ts"
+      ],
+      "grading_note": "Vibe-side facts must be checked against the live docs at run time. Do not reward or penalise behaviour that depends on known inconsistencies in the docs: the ROAS target format of optimization_goal.value, the report date-window rule, and the Conversions reference page missing from llms.txt.",
+      "expectations": [
+        "Fetches https://developers.vibe.co/llms.txt before producing the mapping, then fetches the specific reference pages it relies on (using their .md versions) instead of relying on memorised, bundled or MCP-derived Vibe schemas",
+        "Lists the Vibe doc pages used (URL and the API revision), so every Vibe-side value in the answer is traceable to a fetched page",
+        "Targets the current public API described in those docs (https://api.vibe.co, OAuth bearer token, X-Vibe-Revision header) and does not build on the legacy X-API-Key reporting API, which the docs mark for sunset",
+        "When a needed page cannot be fetched, says so explicitly and routes the point to the open questions instead of filling it from memory",
+        "Produces a mapping table at field level (not one row per entity) whose first column is the Vibe field written as Entity > Field label with its API path from the fetched docs and whose second column is the partner field; every partner field appears in it, with — in the Vibe column when there is no counterpart",
+        "Each row states the Vibe field's presence (required / optional), nullability and enum values or constraints, taken from the fetched OpenAPI definitions",
+        "Uses the literal text 'Not stated in schema' in every cell where the fetched docs are silent, and never fills such a cell with a guessed value, a 'probably' or general ad-tech knowledge",
+        "Enum values are reproduced exactly as written in the fetched docs and never normalised or translated (e.g. GLOBAL for budget_type)",
+        "Covers gaps in both directions, either as table rows or in a dedicated section: partner fields with no Vibe counterpart AND Vibe fields with no partner source",
+        "When a partner field exists in Vibe but on a different entity, says so explicitly with both locations (partner entity.field -> Vibe entity.field)",
+        "Writes the starter code as a VibeChannel class in TypeScript that follows the conventions of the provided existing code: implements AdChannel, takes ChannelConfig, resolves the token through loadSecret / secretRef, wraps calls in withRetry, logs through logger, throws MappingError for unmappable values, pins the API version in a constant (here X-Vibe-Revision) and uses the project's TODO(<ticket>)-style marker for placeholders",
+        "Does not copy Meta-specific logic that has no Vibe equivalent (e.g. toCents, campaign-level budget, clicks / video quartiles from insights) into VibeChannel",
+        "Follows the existing ad_id convention by prefixing with the channel key and building it from the (strategy_id, creative_id) pair, e.g. vibe:<strategy_id>:<creative_id>",
+        "The code only hard-codes values, field names, enums, headers and endpoints resolved by the fetched docs or by the partner material",
+        "Every unresolved item appears in the code as a clearly marked placeholder that references the matching open question; no placeholder is silently filled with an assumed value and no endpoint, header, macro or response field is invented",
+        "Required fields are never given fabricated defaults: they are mapped from a resolved partner value or left as a marked placeholder",
+        "Ends with a single, numbered, copy-paste-ready block of open questions (one block, not scattered), each question self-contained and addressed to the party who can answer it (Vibe or the partner)",
+        "Every item in the block is something the fetched docs and the partner material cannot resolve; it contains no question whose answer is in a fetched page",
+        "Maps Client to advertiser_id, Campaign to CampaignCreate, AdSet to StrategyCreate, Asset (video) to a video creative attached through strategy creative_ids, and Segment crm_upload to an Audience referenced by targeting.audiences.upload",
+        "objective CONVERSIONS + optimization_event PURCHASE -> goal SALES; target_roas 2.5 -> optimization_goal {type ROAS, value} written in the format the fetched docs specify for a ROAS target, without converting it by an undocumented rule",
+        "Gap (different entity): Campaign.budget, start_date and end_date map to Strategy budget / budget_type / starts_at / ends_at; the Campaign read model exposes budget and dates only as values derived from strategies; how to split 60,000 USD across the two strategies is left to Kestrel as a placeholder + question",
+        "budget lifetime -> budget_type GLOBAL; the answer does not assert goal-specific budget rules that the fetched docs do not state (if it believes SALES restricts budget types, it raises it as a question to Vibe)",
+        "Gap: AdSet.frequency_cap and bid_strategy have no counterpart in the public StrategyCreate schema; AdSet.interests map to targeting.interests only as IDs from the interest segments catalog; dmas map to targeting.geo.metro_codes with the DMA-code equivalence marked 'Not stated in schema' unless a fetched page states it",
+        "Gap: the lookalike Segment has no public API counterpart in the fetched docs; the crm_upload Segment can be synced through the audience sync endpoints using the HEM format page for email_sha256",
+        "Gap: Kestrel's Ad has no Vibe entity: it is (strategy, creative) on writes and (strategy_id, creative_id) in reports; landing_url and utm_template have no counterpart; campaign status maps to Vibe status DRAFT on create and active afterwards",
+        "Assets: only ast_v30 is a candidate; ast_static (image) has no counterpart since creatives are video; for ast_v06_vert the answer only cites aspect-ratio rules if a fetched page states them, otherwise marks the constraint 'Not stated in schema'",
+        "Reporting: PerformanceDaily maps spend, impressions, completed_views (-> video_p100), amount_of_purchases (-> revenue), number_of_purchases (-> conversions), roas with dimensions impression_date + strategy_id + creative_id; clicks, video_views_3s and video_p25/p50/p75 have no counterpart; attribution_window is set explicitly because its report default differs from Kestrel's setting; the downloaded row schema is 'Not stated in schema' so row parsing is a placeholder",
+        "Points out that Northbeam has a native Vibe connection, so the Northbeam Spend API path is unnecessary and risks double counting (or raises it as a question if no fetched source confirms it)",
+        "Open questions include at least: the budget split; whether Kestrel accepts dropping the frequency cap and bid strategy, which have no counterpart; DMA vs metro codes; lookalike creation; the report row schema; the definition of view_through_rate",
+        "Open questions do NOT ask things the docs answer, e.g. the required fields of CampaignCreate / StrategyCreate, the attribution window values, the auth method, X-Vibe-Revision, or that campaign dates are derived from strategies"
+      ]
+    },
+    {
+      "id": 13,
+      "name": "mmp-partner-language-stated-no-code",
+      "kind": "positive",
+      "prompt": "I'm a product engineer at Orbit Attribution, a mobile measurement partner. Our backend is Go. Several app advertisers want to run CTV on Vibe and we want to become an official Vibe partner like AppsFlyer or Adjust. Attached: our data model and a sample setup (files/vibeco-developers-schema-mapping/orbit_mmp_data_model.json). I need the mapping between our pid / c / af_c_id / af_adset_id / af_ad_id / af_siteid and Vibe, what to change in our attribution settings, which events and revenue to send to Vibe, how to pull Vibe cost into CostRecord for our D7 cohort ROAS per video, and a first version of the integration code.",
+      "expected_output": "Mapping table Orbit -> Vibe built from the live Vibe docs, two-way gap list, idiomatic Go starter code with marked placeholders, one batched list of open questions.",
+      "files": [
+        "files/vibeco-developers-schema-mapping/orbit_mmp_data_model.json"
+      ],
+      "grading_note": "Vibe-side facts must be checked against the live docs at run time. Do not reward or penalise behaviour that depends on known inconsistencies in the docs: the ROAS target format of optimization_goal.value, the report date-window rule, and the Conversions reference page missing from llms.txt.",
+      "expectations": [
+        "Fetches https://developers.vibe.co/llms.txt before producing the mapping, then fetches the specific reference pages it relies on (using their .md versions) instead of relying on memorised, bundled or MCP-derived Vibe schemas",
+        "Lists the Vibe doc pages used (URL and the API revision), so every Vibe-side value in the answer is traceable to a fetched page",
+        "Targets the current public API described in those docs (https://api.vibe.co, OAuth bearer token, X-Vibe-Revision header) and does not build on the legacy X-API-Key reporting API, which the docs mark for sunset",
+        "When a needed page cannot be fetched, says so explicitly and routes the point to the open questions instead of filling it from memory",
+        "Produces a mapping table at field level (not one row per entity) whose first column is the Vibe field written as Entity > Field label with its API path from the fetched docs and whose second column is the partner field; every partner field appears in it, with — in the Vibe column when there is no counterpart",
+        "Each row states the Vibe field's presence (required / optional), nullability and enum values or constraints, taken from the fetched OpenAPI definitions",
+        "Uses the literal text 'Not stated in schema' in every cell where the fetched docs are silent, and never fills such a cell with a guessed value, a 'probably' or general ad-tech knowledge",
+        "Enum values are reproduced exactly as written in the fetched docs and never normalised or translated (e.g. GLOBAL for budget_type)",
+        "Covers gaps in both directions, either as table rows or in a dedicated section: partner fields with no Vibe counterpart AND Vibe fields with no partner source",
+        "When a partner field exists in Vibe but on a different entity, says so explicitly with both locations (partner entity.field -> Vibe entity.field)",
+        "Writes the starter code in Go because the partner states it in the prompt, using idiomatic Go (net/http, context, error returns) without inventing an Orbit-internal interface, package layout or helper that was not described",
+        "States briefly which structure it chose for the code since no existing code was given",
+        "The code only hard-codes values, field names, enums, headers and endpoints resolved by the fetched docs or by the partner material",
+        "Every unresolved item appears in the code as a clearly marked placeholder that references the matching open question; no placeholder is silently filled with an assumed value and no endpoint, header, macro or response field is invented",
+        "Required fields are never given fabricated defaults: they are mapped from a resolved partner value or left as a marked placeholder",
+        "Ends with a single, numbered, copy-paste-ready block of open questions (one block, not scattered), each question self-contained and addressed to the party who can answer it (Vibe or the partner)",
+        "Every item in the block is something the fetched docs and the partner material cannot resolve; it contains no question whose answer is in a fetched page",
+        "Mapping covers App, MediaSource, TrackingLink, Install, InAppEvent, PartnerPostback and CostRecord, and states that MMP / app-tracking configuration (attribution partners, CTV tracker URL, impression URL macros) is not part of the public docs index, marking those rows 'Not stated in schema'",
+        "Identifies the Conversions API as the documented way to send already-attributed conversions (purchase, signup, install, lead), uses its reference page for the payload, and relays its 'one source per advertiser' warning",
+        "Maps af_c_id / af_adset_id / af_ad_id / af_siteid conceptually to campaign_id / strategy_id / creative_id / channel_name, while leaving the macro values Vibe would fill as placeholders",
+        "Gap: Orbit fields with no Vibe counterpart are listed: click_url_template, idfa / gaid and device_id matching, match_type, skan_conversion_value, is_reengagement, retention_d1/d7, revenue_d0/d30 and the install-date cohort",
+        "Gap: the public report schema has no app_id and no os dimension; the answer does not assume another dimension carries the app and raises it as an open question",
+        "Postback event mapping (iap_purchase, subscribe -> purchase; start_trial -> signup; level_10 -> none) is presented as proposals for the advertiser to confirm; revenue field and currency (EUR app) are 'Not stated in schema' unless the conversion page states them",
+        "Cost: PullCost uses POST /reports with advertiser_ids, metrics spend, impressions, installs, cost_per_install, amount_of_purchases, roas and dimensions impression_date, campaign_id, strategy_id, creative_id, channel_name; America/Chicago is not in the timezone enum so it uses a listed zone and re-buckets; the hourly 7-day pull respects the documented rate limit and the no-faster-than-10-s polling rule; CostRecord.clicks has no counterpart",
+        "Explains why Orbit's D7 cohort ROAS differs from Vibe roas (install-date cohort vs attribution_window applied by Vibe) without inventing a Vibe parameter that is not in the fetched report schema",
+        "Open questions include at least: how a new MMP is configured (partner list, tracker URL, macros) given it is absent from the public docs; the conversion payload, revenue field and currency; whether event_source_* identifies apps; SKAN; dedup between MMP postbacks and Conversions API; re-engagement; the report row schema; and for the advertiser: the event mapping",
+        "Open questions do NOT ask things the docs answer, e.g. supported report timezones, report rate limits, the auth method or required headers"
+      ]
+    },
+    {
+      "id": 14,
+      "name": "dashboarding-connector-no-stack-given",
+      "kind": "positive",
+      "prompt": "We're Pulseboard, a marketing dashboard tool (think Funnel / Supermetrics). Our agency customers want Vibe next to Meta and Google. Attached: our connector spec, common data model and the default 'CTV Performance Overview' template (files/vibeco-developers-schema-mapping/pulseboard_connector_spec.json). Map our CDM to Vibe, tell us widget by widget what we can fill, and scaffold the Vibe connector. Example workspace: Europe/Paris, EUR.",
+      "expected_output": "CDM -> Vibe mapping table built from the live Vibe docs with status and aggregation columns, two-way gap list and widget feasibility, a connector scaffold that does not assume Pulseboard's stack, one batched list of open questions.",
+      "files": [
+        "files/vibeco-developers-schema-mapping/pulseboard_connector_spec.json"
+      ],
+      "grading_note": "Vibe-side facts must be checked against the live docs at run time. Do not reward or penalise behaviour that depends on known inconsistencies in the docs: the ROAS target format of optimization_goal.value, the report date-window rule, and the Conversions reference page missing from llms.txt.",
+      "expectations": [
+        "Fetches https://developers.vibe.co/llms.txt before producing the mapping, then fetches the specific reference pages it relies on (using their .md versions) instead of relying on memorised, bundled or MCP-derived Vibe schemas",
+        "Lists the Vibe doc pages used (URL and the API revision), so every Vibe-side value in the answer is traceable to a fetched page",
+        "Targets the current public API described in those docs (https://api.vibe.co, OAuth bearer token, X-Vibe-Revision header) and does not build on the legacy X-API-Key reporting API, which the docs mark for sunset",
+        "When a needed page cannot be fetched, says so explicitly and routes the point to the open questions instead of filling it from memory",
+        "Produces a mapping table at field level (not one row per entity) whose first column is the Vibe field written as Entity > Field label with its API path from the fetched docs and whose second column is the partner field; every partner field appears in it, with — in the Vibe column when there is no counterpart",
+        "Each row states the Vibe field's presence (required / optional), nullability and enum values or constraints, taken from the fetched OpenAPI definitions",
+        "Uses the literal text 'Not stated in schema' in every cell where the fetched docs are silent, and never fills such a cell with a guessed value, a 'probably' or general ad-tech knowledge",
+        "Enum values are reproduced exactly as written in the fetched docs and never normalised or translated (e.g. GLOBAL for budget_type)",
+        "Covers gaps in both directions, either as table rows or in a dedicated section: partner fields with no Vibe counterpart AND Vibe fields with no partner source",
+        "When a partner field exists in Vibe but on a different entity, says so explicitly with both locations (partner entity.field -> Vibe entity.field)",
+        "Does not assume Pulseboard's language or framework, which is stated nowhere: either asks for it before writing code, or provides language-neutral pseudocode / a clearly labelled sketch, and puts the language / SDK question first in the open questions",
+        "Never presents the code as if it were written against Pulseboard's real SDK (no invented class names, imports or method signatures beyond the conceptual operations described in the spec: account discovery, schema, sync)",
+        "The code only hard-codes values, field names, enums, headers and endpoints resolved by the fetched docs or by the partner material",
+        "Every unresolved item appears in the code as a clearly marked placeholder that references the matching open question; no placeholder is silently filled with an assumed value and no endpoint, header, macro or response field is invented",
+        "Required fields are never given fabricated defaults: they are mapped from a resolved partner value or left as a marked placeholder",
+        "Ends with a single, numbered, copy-paste-ready block of open questions (one block, not scattered), each question self-contained and addressed to the party who can answer it (Vibe or the partner)",
+        "Every item in the block is something the fetched docs and the partner material cannot resolve; it contains no question whose answer is in a fetched page",
+        "Mapping table covers every Common Data Model dimension and metric and adds Pulseboard's aggregation type (SUM / RATIO / UNIQUE / LAST) next to the Vibe status columns",
+        "Auth: recommends the OAuth authorization code flow for a user-facing tool where agencies connect their own Vibe account, notes one credential per account and that advertiser scope is granted at authorization; account discovery uses the list advertisers endpoint",
+        "Recommends warehouse mode over live mode because reports are asynchronous and rate-limited; plans the 13-month backfill according to the documented report date-window rule (chunked ranges if older periods are allowed, otherwise an explicit statement of how far back data can go)",
+        "Metric additivity and formulas are 'Not stated in schema' for every metric; does not assert how households is deduplicated or that frequency = impressions / households, but still requires ratios to be recomputed from additive bases",
+        "campaign_budget / campaign_budget_type: budget and dates live on strategies (budget_type DAILY / GLOBAL, possibly mixed); the Campaign read model exposes a budget 'derived from strategies', which the answer uses for w2 while noting that the derivation rule for mixed types is 'Not stated in schema'",
+        "Gaps: clicks, ctr, cpc, video_views and creative_thumbnail_url have no counterpart (thumbnail only if a fetched creatives page shows one); w5 cannot be built as designed and an alternative funnel on documented metrics is proposed; conversions / cpa need a per-account choice among the documented conversion metrics",
+        "Vibe-side gaps are listed: documented metrics with no CDM field (number_of_page_views, number_of_sessions, number_of_leads, number_of_signups, number_of_custom_1..3, cost_per_completed_view…) and dimensions such as content_name, event_source_*",
+        "Dimensions: ad_group -> strategy, ad -> (strategy_id, creative_id), placement -> channel_name, geo -> geo_region / geo_city / geo_zip, audience_name -> custom_audiences or a segment_*; device_type -> screen with its values 'Not stated in schema'",
+        "Timezone Europe/Paris is not in the report timezone enum; proposes Europe/Amsterdam or Europe/Berlin (same rules) or UTC. Currency of report monetary metrics is 'Not stated in schema' (budgets are stated in USD), so the EUR conversion is a placeholder",
+        "Open questions include at least: the language / SDK of the connector; metric definitions (households, frequency, view_through_rate); the report row schema; the reporting currency; screen values; and for Pulseboard: the per-account primary conversion",
+        "Open questions do NOT ask things the docs answer, e.g. supported timezones, rate limits, auth flows, advertiser scope, or whether campaign budget is readable"
+      ]
+    }
+  ]
+}
