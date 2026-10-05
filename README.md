@@ -1,6 +1,6 @@
 # Vibe Developer Platform agent skills
 
-- [`vibeco`](skills/vibeco) helps partner engineers create Vibe apps,
+- [`vibeco-developers`](skills/vibeco-developers) helps partner engineers create Vibe apps,
   implement OAuth, use the Vibe Developer Platform API and CLI, and build
   reporting or audience integrations.
 - [`vibeco-developers-schema-mapping`](skills/vibeco-developers-schema-mapping)
@@ -12,8 +12,8 @@
 
 The repository also contains OpenAI and Anthropic plugin manifests that package
 the same skills without maintaining provider-specific copies. Each skill has its
-evaluation cases in `evals/`: `evals.json` for `vibeco`, and
-`<skill-name>.json` for the others, with fixtures under `evals/files/`.
+evaluation cases in `evals/<skill-name>.json`, with fixtures under
+`evals/files/`.
 
 ## Local validation
 

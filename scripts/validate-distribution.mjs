@@ -16,8 +16,7 @@ const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const ROOT_REAL = realpathSync(ROOT);
 const SKILLS_ROOT = join(ROOT, "skills");
 const EVALS_ROOT = join(ROOT, "evals");
-const PRIMARY_SKILL = "vibeco";
-const LEGACY_EVALS_FILE = "evals.json";
+const PRIMARY_SKILL = "vibeco-developers";
 const MAX_DESCRIPTION_LENGTH = 1024;
 const PLUGIN_NAME = "vibeco";
 const MARKETPLACE_NAME = "vibe-co";
@@ -327,14 +326,8 @@ function validateCodexMarketplace(errors) {
   requireText(entry, "category", `${label} plugin`, errors);
 }
 
-// The primary skill keeps its historical evals/evals.json; every other skill
-// has evals/<skill-name>.json.
-function evalsFileFor(skillName) {
-  return skillName === PRIMARY_SKILL ? LEGACY_EVALS_FILE : `${skillName}.json`;
-}
-
 function validateEvals(skillNames, errors) {
-  const expectedFiles = new Map(skillNames.map((name) => [evalsFileFor(name), name]));
+  const expectedFiles = new Map(skillNames.map((name) => [`${name}.json`, name]));
   const actualFiles = readdirSync(EVALS_ROOT).filter((file) => extname(file) === ".json");
   for (const file of actualFiles) {
     if (!expectedFiles.has(file)) {
