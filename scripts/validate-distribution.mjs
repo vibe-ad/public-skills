@@ -19,6 +19,11 @@ const EVALS_ROOT = join(ROOT, "evals");
 const PRIMARY_SKILL = "vibeco";
 const LEGACY_EVALS_FILE = "evals.json";
 const MAX_DESCRIPTION_LENGTH = 1024;
+const PLUGIN_NAME = "vibeco";
+const MARKETPLACE_NAME = "vibe-co";
+const LICENSE_ID = "MIT";
+const REPOSITORY_GIT_URL = "https://github.com/vibe-ad/public-skills.git";
+const CODEX_INSTALLATION_POLICIES = new Set(["AVAILABLE", "INSTALLED_BY_DEFAULT", "NOT_AVAILABLE"]);
 const SEMVER = /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/;
 const SKILL_NAME = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 const REFERENCE_LINK = /\]\((references\/[^)#]+)(?:#[^)]+)?\)/g;
@@ -109,6 +114,9 @@ function validateSkill(name, errors) {
   const description = requireText(frontmatter, "description", label, errors);
   if (description !== undefined && description.length > MAX_DESCRIPTION_LENGTH) {
     errors.push(`${label} description must be at most ${MAX_DESCRIPTION_LENGTH} characters`);
+  }
+  if (frontmatter.license !== LICENSE_ID) {
+    errors.push(`${label} license must be \`${LICENSE_ID}\``);
   }
 
   for (const match of text.matchAll(REFERENCE_LINK)) {
@@ -228,6 +236,97 @@ function validateManifests(errors) {
   }
 }
 
+function validateLicense(errors) {
+  const path = join(ROOT, "LICENSE");
+  if (!existsSync(path)) {
+    errors.push("missing LICENSE");
+  } else if (!readFileSync(path, "utf8").startsWith(`${LICENSE_ID} License`)) {
+    errors.push(`LICENSE must contain the ${LICENSE_ID} License text`);
+  }
+
+  for (const [label, directory] of [
+    ["OpenAI", ".codex-plugin"],
+    ["Anthropic", ".claude-plugin"],
+  ]) {
+    const manifest = loadJson(join(ROOT, directory, "plugin.json"), errors);
+    if (manifest.license !== LICENSE_ID) {
+      errors.push(`${label} plugin license must be \`${LICENSE_ID}\``);
+    }
+  }
+}
+
+// The Claude entry points at the repository root, so .claude-plugin/plugin.json
+// stays the only place that declares the plugin version.
+function validateClaudeMarketplace(errors) {
+  const label = "Anthropic marketplace";
+  const marketplace = loadJson(join(ROOT, ".claude-plugin", "marketplace.json"), errors);
+  if (Object.keys(marketplace).length === 0) {
+    return;
+  }
+  if (marketplace.name !== MARKETPLACE_NAME) {
+    errors.push(`${label} name must be \`${MARKETPLACE_NAME}\``);
+  }
+  if (!isObject(marketplace.owner)) {
+    errors.push(`${label} owner must be an object`);
+  } else {
+    requireText(marketplace.owner, "name", `${label} owner`, errors);
+  }
+
+  const entries = Array.isArray(marketplace.plugins) ? marketplace.plugins : [];
+  if (entries.length !== 1 || !isObject(entries[0])) {
+    errors.push(`${label} must list exactly one plugin entry`);
+    return;
+  }
+  const [entry] = entries;
+  if (entry.name !== PLUGIN_NAME) {
+    errors.push(`${label} plugin name must be \`${PLUGIN_NAME}\``);
+  }
+  if (entry.source !== "./") {
+    errors.push(`${label} plugin source must be \`./\``);
+  }
+  if ("version" in entry) {
+    errors.push(`${label} plugin entry must not declare a version`);
+  }
+  requireText(entry, "description", `${label} plugin`, errors);
+}
+
+function validateCodexMarketplace(errors) {
+  const label = "OpenAI marketplace";
+  const marketplace = loadJson(join(ROOT, ".agents", "plugins", "marketplace.json"), errors);
+  if (Object.keys(marketplace).length === 0) {
+    return;
+  }
+  if (marketplace.name !== MARKETPLACE_NAME) {
+    errors.push(`${label} name must be \`${MARKETPLACE_NAME}\``);
+  }
+  if (!isObject(marketplace.interface)) {
+    errors.push(`${label} interface must be an object`);
+  } else {
+    requireText(marketplace.interface, "displayName", `${label} interface`, errors);
+  }
+
+  const entries = Array.isArray(marketplace.plugins) ? marketplace.plugins : [];
+  if (entries.length !== 1 || !isObject(entries[0])) {
+    errors.push(`${label} must list exactly one plugin entry`);
+    return;
+  }
+  const [entry] = entries;
+  if (entry.name !== PLUGIN_NAME) {
+    errors.push(`${label} plugin name must be \`${PLUGIN_NAME}\``);
+  }
+  if (
+    !isObject(entry.source) ||
+    entry.source.source !== "url" ||
+    entry.source.url !== REPOSITORY_GIT_URL
+  ) {
+    errors.push(`${label} plugin source must be the URL \`${REPOSITORY_GIT_URL}\``);
+  }
+  if (!isObject(entry.policy) || !CODEX_INSTALLATION_POLICIES.has(entry.policy.installation)) {
+    errors.push(`${label} plugin policy.installation must be a known Codex policy`);
+  }
+  requireText(entry, "category", `${label} plugin`, errors);
+}
+
 // The primary skill keeps its historical evals/evals.json; every other skill
 // has evals/<skill-name>.json.
 function evalsFileFor(skillName) {
@@ -332,6 +431,9 @@ function validateNoPlaceholders(errors) {
 const errors = [];
 const skillNames = validateSkills(errors);
 validateManifests(errors);
+validateLicense(errors);
+validateClaudeMarketplace(errors);
+validateCodexMarketplace(errors);
 validateEvals(skillNames, errors);
 validateNoPlaceholders(errors);
 
