@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
+  "name": "vibe-co",
+  "owner": {
+    "name": "Vibe.co",
+    "url": "https://www.vibe.co/"
+  },
+  "description": "Official Vibe.co skills for building on the Vibe Developer Platform.",
+  "plugins": [
+    {
+      "name": "vibeco",
+      "source": "./",
+      "description": "Build and operate partner integrations for the Vibe Developer Platform.",
+      "category": "development",
+      "homepage": "https://developers.vibe.co/"
+    }
+  ]
+}
