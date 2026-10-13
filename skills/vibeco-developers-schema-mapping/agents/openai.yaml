@@ -1,0 +1,10 @@
+interface:
+  display_name: "Vibe schema mapping"
+  short_description: "Map a partner data model onto Vibe API entities"
+  icon_small: "./assets/vibe-co-logo.jpg"
+  icon_large: "./assets/vibe-co-logo.jpg"
+  brand_color: "#4F46E5"
+  default_prompt: "Use $vibeco-developers-schema-mapping to map our data model onto the Vibe API before we start coding."
+
+policy:
+  allow_implicit_invocation: true

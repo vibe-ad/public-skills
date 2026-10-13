@@ -1,12 +1,19 @@
-# Vibe Developer Platform agent skill
+# Vibe Developer Platform agent skills
 
-`vibeco` helps partner engineers create Vibe apps, implement OAuth, use the
-Vibe Developer Platform API and CLI, and build reporting or audience
-integrations.
+- [`vibeco`](skills/vibeco) helps partner engineers create Vibe apps,
+  implement OAuth, use the Vibe Developer Platform API and CLI, and build
+  reporting or audience integrations.
+- [`vibeco-developers-schema-mapping`](skills/vibeco-developers-schema-mapping)
+  maps a partner's existing data model onto Vibe API entities and report
+  metrics before coding: a field-by-field table sourced from the live OpenAPI
+  schema, the fields that belong to another entity or have no counterpart,
+  starter code limited to confirmed fields, and one batched list of open
+  questions.
 
-The canonical skill is in [`skills/vibeco`](skills/vibeco). The repository also
-contains OpenAI and Anthropic plugin manifests that package the same skill
-without maintaining provider-specific copies.
+The repository also contains OpenAI and Anthropic plugin manifests that package
+the same skills without maintaining provider-specific copies. Each skill has its
+evaluation cases in `evals/`: `evals.json` for `vibeco`, and
+`<skill-name>.json` for the others, with fixtures under `evals/files/`.
 
 ## Local validation
 

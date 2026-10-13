@@ -14,8 +14,13 @@ import { parse as parseYaml } from "yaml";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const ROOT_REAL = realpathSync(ROOT);
-const SKILL_ROOT = join(ROOT, "skills", "vibeco");
+const SKILLS_ROOT = join(ROOT, "skills");
+const EVALS_ROOT = join(ROOT, "evals");
+const PRIMARY_SKILL = "vibeco";
+const LEGACY_EVALS_FILE = "evals.json";
+const MAX_DESCRIPTION_LENGTH = 1024;
 const SEMVER = /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/;
+const SKILL_NAME = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 const REFERENCE_LINK = /\]\((references\/[^)#]+)(?:#[^)]+)?\)/g;
 
 function displayPath(path) {
@@ -55,22 +60,31 @@ function requireText(value, field, label, errors) {
   return candidate;
 }
 
-function validateSkill(errors) {
-  const path = join(SKILL_ROOT, "SKILL.md");
+function listSkillNames() {
+  return readdirSync(SKILLS_ROOT, { withFileTypes: true })
+    .filter((entry) => entry.isDirectory())
+    .map((entry) => entry.name)
+    .sort();
+}
+
+function validateSkill(name, errors) {
+  const skillRoot = join(SKILLS_ROOT, name);
+  const label = `skills/${name}/SKILL.md`;
+  const path = join(skillRoot, "SKILL.md");
   if (!existsSync(path)) {
-    errors.push("missing skills/vibeco/SKILL.md");
+    errors.push(`missing ${label}`);
     return;
   }
 
   const text = readFileSync(path, "utf8");
   if (!text.startsWith("---\n")) {
-    errors.push("SKILL.md must start with YAML frontmatter");
+    errors.push(`${label} must start with YAML frontmatter`);
     return;
   }
 
   const end = text.indexOf("\n---", 4);
   if (end === -1) {
-    errors.push("SKILL.md frontmatter is not closed");
+    errors.push(`${label} frontmatter is not closed`);
     return;
   }
 
@@ -79,24 +93,41 @@ function validateSkill(errors) {
     frontmatter = parseYaml(text.slice(4, end));
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
-    errors.push(`SKILL.md frontmatter is invalid: ${message}`);
+    errors.push(`${label} frontmatter is invalid: ${message}`);
     return;
   }
   if (!isObject(frontmatter)) {
-    errors.push("SKILL.md frontmatter must be an object");
+    errors.push(`${label} frontmatter must be an object`);
     return;
   }
-  if (frontmatter.name !== "vibeco") {
-    errors.push("SKILL.md name must be `vibeco`");
+  if (!SKILL_NAME.test(name)) {
+    errors.push(`skills/${name} must be a lowercase kebab-case name`);
   }
-  requireText(frontmatter, "description", "SKILL.md", errors);
+  if (frontmatter.name !== name) {
+    errors.push(`${label} name must be \`${name}\`, matching its directory`);
+  }
+  const description = requireText(frontmatter, "description", label, errors);
+  if (description !== undefined && description.length > MAX_DESCRIPTION_LENGTH) {
+    errors.push(`${label} description must be at most ${MAX_DESCRIPTION_LENGTH} characters`);
+  }
 
   for (const match of text.matchAll(REFERENCE_LINK)) {
     const reference = match[1];
-    if (reference !== undefined && !existsSync(join(SKILL_ROOT, reference))) {
-      errors.push(`SKILL.md references missing file: ${reference}`);
+    if (reference !== undefined && !existsSync(join(skillRoot, reference))) {
+      errors.push(`${label} references missing file: ${reference}`);
     }
   }
+}
+
+function validateSkills(errors) {
+  const names = listSkillNames();
+  if (!names.includes(PRIMARY_SKILL)) {
+    errors.push(`missing skills/${PRIMARY_SKILL}`);
+  }
+  for (const name of names) {
+    validateSkill(name, errors);
+  }
+  return names;
 }
 
 function validateHttpsUrl(value, field, errors) {
@@ -197,15 +228,35 @@ function validateManifests(errors) {
   }
 }
 
-function validateEvals(errors) {
-  const payload = loadJson(join(ROOT, "evals", "evals.json"), errors);
-  if (payload.skill_name !== "vibeco") {
-    errors.push("evals/evals.json skill_name must be `vibeco`");
+// The primary skill keeps its historical evals/evals.json; every other skill
+// has evals/<skill-name>.json.
+function evalsFileFor(skillName) {
+  return skillName === PRIMARY_SKILL ? LEGACY_EVALS_FILE : `${skillName}.json`;
+}
+
+function validateEvals(skillNames, errors) {
+  const expectedFiles = new Map(skillNames.map((name) => [evalsFileFor(name), name]));
+  const actualFiles = readdirSync(EVALS_ROOT).filter((file) => extname(file) === ".json");
+  for (const file of actualFiles) {
+    if (!expectedFiles.has(file)) {
+      errors.push(`evals/${file} does not belong to any skill`);
+    }
+  }
+  for (const [file, skillName] of expectedFiles) {
+    validateEvalsFile(file, skillName, errors);
+  }
+}
+
+function validateEvalsFile(file, skillName, errors) {
+  const label = `evals/${file}`;
+  const payload = loadJson(join(EVALS_ROOT, file), errors);
+  if (payload.skill_name !== skillName) {
+    errors.push(`${label} skill_name must be \`${skillName}\``);
   }
 
   const cases = payload.evals;
   if (!Array.isArray(cases)) {
-    errors.push("evals/evals.json evals must be an array");
+    errors.push(`${label} evals must be an array`);
     return;
   }
 
@@ -221,7 +272,7 @@ function validateEvals(errors) {
     validIdentifiers.length !== cases.length ||
     new Set(validIdentifiers).size !== validIdentifiers.length
   ) {
-    errors.push("evaluation IDs must be present and unique");
+    errors.push(`${label} evaluation IDs must be present and unique`);
   }
 
   const positive = cases.filter(
@@ -231,19 +282,25 @@ function validateEvals(errors) {
     (testCase) => isObject(testCase) && testCase.kind === "negative",
   ).length;
   if (positive < 5) {
-    errors.push("at least five positive evaluation cases are required");
+    errors.push(`${label} needs at least five positive evaluation cases`);
   }
   if (negative < 3) {
-    errors.push("at least three negative evaluation cases are required");
+    errors.push(`${label} needs at least three negative evaluation cases`);
   }
 
   for (const testCase of cases) {
     if (!isObject(testCase)) {
-      errors.push("evaluation entries must be objects");
+      errors.push(`${label} evaluation entries must be objects`);
       continue;
     }
+    const caseLabel = `${label} evaluation ${String(testCase.id)}`;
     for (const field of ["prompt", "expected_output"]) {
-      requireText(testCase, field, `evaluation ${String(testCase.id)}`, errors);
+      requireText(testCase, field, caseLabel, errors);
+    }
+    for (const fixture of testCase.files ?? []) {
+      if (typeof fixture !== "string" || !existsSync(join(EVALS_ROOT, fixture))) {
+        errors.push(`${caseLabel} lists a missing file: ${String(fixture)}`);
+      }
     }
   }
 }
@@ -273,9 +330,9 @@ function validateNoPlaceholders(errors) {
 }
 
 const errors = [];
-validateSkill(errors);
+const skillNames = validateSkills(errors);
 validateManifests(errors);
-validateEvals(errors);
+validateEvals(skillNames, errors);
 validateNoPlaceholders(errors);
 
 if (errors.length > 0) {

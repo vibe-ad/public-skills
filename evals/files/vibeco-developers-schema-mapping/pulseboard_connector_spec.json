@@ -1,0 +1,187 @@
+{
+  "_about": "Fictional fixture. Pulseboard is an imaginary multi-channel marketing dashboard SaaS, modeled on how tools like Funnel or Supermetrics work: each ad platform connector maps its fields to a Common Data Model (Cost, Impressions, Clicks, Campaign, Ad Group...), with currency conversion and standard metric rules. Pulseboard wants to ship a Vibe connector.",
+  "connector_sdk": {
+    "auth": {
+      "supported": [
+        "oauth2",
+        "api_key"
+      ],
+      "one_credential_many_accounts": "preferred"
+    },
+    "account_discovery": "connector must list every account (advertiser) reachable with the credential",
+    "query_modes": {
+      "live": "widget fires a synchronous query when a user opens a dashboard; must answer in < 5 s",
+      "warehouse": "scheduled sync into Pulseboard storage; dashboards read from storage"
+    },
+    "default_mode": "live",
+    "sync_settings": {
+      "refresh_every": "1h",
+      "rolling_refresh_window_days": 3,
+      "initial_backfill_months": 13
+    },
+    "hierarchy_levels": [
+      "account",
+      "campaign",
+      "ad_group",
+      "ad"
+    ],
+    "dimension_rules": "a connector may expose any number of dimensions per query; widgets combine 1-4 dimensions freely",
+    "metric_aggregation_types": {
+      "SUM": "additive (cost, impressions, clicks, conversions)",
+      "RATIO": "recomputed from numerator/denominator at display grain (ctr, cpm, roas)",
+      "UNIQUE": "non-additive, must be fetched at the exact display grain (reach)",
+      "LAST": "snapshot values (budget, status)"
+    }
+  },
+  "common_data_model": {
+    "dimensions": {
+      "date": "date (workspace timezone)",
+      "account_id": "string",
+      "account_name": "string",
+      "campaign_id": "string",
+      "campaign_name": "string",
+      "campaign_status": "string",
+      "campaign_budget": "decimal (LAST) — daily or lifetime, at campaign level",
+      "campaign_budget_type": "enum[daily, lifetime]",
+      "ad_group_id": "string",
+      "ad_group_name": "string",
+      "ad_id": "string",
+      "ad_name": "string",
+      "creative_thumbnail_url": "url",
+      "creative_type": "enum[video, image, text]",
+      "device_type": "enum[mobile, desktop, tablet, ctv]",
+      "placement": "string (site / app / channel)",
+      "country": "string",
+      "region": "string",
+      "city": "string",
+      "postal_code": "string",
+      "audience_name": "string"
+    },
+    "metrics": {
+      "cost": "SUM, workspace currency",
+      "impressions": "SUM",
+      "clicks": "SUM",
+      "ctr": "RATIO clicks/impressions",
+      "cpc": "RATIO cost/clicks",
+      "cpm": "RATIO cost/impressions*1000",
+      "reach": "UNIQUE",
+      "frequency": "RATIO impressions/reach",
+      "video_views": "SUM",
+      "video_completions": "SUM",
+      "video_completion_rate": "RATIO video_completions/video_views",
+      "conversions": "SUM (single 'primary conversion' per account)",
+      "conversion_value": "SUM, workspace currency",
+      "cpa": "RATIO cost/conversions",
+      "roas": "RATIO conversion_value/cost",
+      "app_installs": "SUM"
+    }
+  },
+  "workspace_settings_example": {
+    "timezone": "Europe/Paris",
+    "currency": "EUR",
+    "attribution_note": "use each platform's default attribution"
+  },
+  "default_dashboard_template": {
+    "name": "CTV Performance Overview",
+    "widgets": [
+      {
+        "id": "w1",
+        "type": "scorecards",
+        "metrics": [
+          "cost",
+          "impressions",
+          "reach",
+          "frequency",
+          "roas"
+        ],
+        "period": "last 30 days vs previous 30 days"
+      },
+      {
+        "id": "w2",
+        "type": "budget_pacing",
+        "dimensions": [
+          "campaign_name"
+        ],
+        "metrics": [
+          "cost",
+          "campaign_budget"
+        ],
+        "note": "shows % of campaign budget spent"
+      },
+      {
+        "id": "w3",
+        "type": "creative_gallery",
+        "dimensions": [
+          "ad_name",
+          "creative_thumbnail_url"
+        ],
+        "metrics": [
+          "cost",
+          "video_completion_rate",
+          "conversion_value",
+          "roas"
+        ]
+      },
+      {
+        "id": "w4",
+        "type": "table",
+        "dimensions": [
+          "campaign_name",
+          "ad_group_name",
+          "audience_name",
+          "region"
+        ],
+        "metrics": [
+          "cost",
+          "conversions",
+          "cpa",
+          "roas"
+        ]
+      },
+      {
+        "id": "w5",
+        "type": "funnel",
+        "metrics": [
+          "impressions",
+          "clicks",
+          "conversions"
+        ]
+      },
+      {
+        "id": "w6",
+        "type": "map",
+        "dimensions": [
+          "postal_code"
+        ],
+        "metrics": [
+          "cost",
+          "conversions"
+        ]
+      },
+      {
+        "id": "w7",
+        "type": "bar",
+        "dimensions": [
+          "placement"
+        ],
+        "metrics": [
+          "cost",
+          "cpm",
+          "roas"
+        ]
+      },
+      {
+        "id": "w8",
+        "type": "line",
+        "dimensions": [
+          "date"
+        ],
+        "metrics": [
+          "reach",
+          "frequency"
+        ],
+        "period": "last 13 months, weekly"
+      }
+    ]
+  }
+}
