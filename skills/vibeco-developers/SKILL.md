@@ -1,6 +1,7 @@
 ---
-name: vibeco
+name: vibeco-developers
 description: Build and operate partner integrations for the Vibe Developer Platform. Use when an engineer needs to choose, create, or configure a Vibe.co app, implement OAuth, call the API or vibeco CLI, or add Vibe support to an application. Do not use for ordinary campaign advice or Vibe UI tasks unrelated to the Developer Platform.
+license: MIT
 ---
 
 # Vibe Developer Platform

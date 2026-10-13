@@ -1,6 +1,7 @@
 ---
 name: vibeco-developers-schema-mapping
 description: Map a partner's existing data model onto the Vibe Developer Platform API before writing integration code. Use when a developer shares a data model, database schema, type definitions, connector spec, or sample payload and wants to know how it maps to Vibe advertisers, campaigns, strategies, creatives, audiences, conversions, or report metrics and dimensions; which Vibe fields are required, optional, nullable, or enum-constrained; which of their fields belong to another Vibe entity or have no counterpart; starter code limited to confirmed fields; or one batched list of open schema questions. NOT for advertisers planning campaigns, NOT for OAuth or app setup, and NOT for running an audience sync or pulling a report.
+license: MIT
 ---
 
 # Vibe schema mapping

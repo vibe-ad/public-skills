@@ -9,6 +9,8 @@
     "url": "https://www.vibe.co/"
   },
   "homepage": "https://developers.vibe.co/",
+  "repository": "https://github.com/vibe-ad/public-skills",
+  "license": "MIT",
   "keywords": [
     "vibe",
     "developer-platform",

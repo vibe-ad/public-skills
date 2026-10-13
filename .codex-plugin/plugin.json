@@ -7,6 +7,8 @@
     "url": "https://www.vibe.co/"
   },
   "homepage": "https://developers.vibe.co/",
+  "repository": "https://github.com/vibe-ad/public-skills",
+  "license": "MIT",
   "keywords": [
     "vibe",
     "developer-platform",
@@ -35,7 +37,7 @@
       "Prepare a safe Vibe audience synchronization workflow."
     ],
     "brandColor": "#4F46E5",
-    "composerIcon": "./skills/vibeco/assets/vibe-co-logo.jpg",
-    "logo": "./skills/vibeco/assets/vibe-co-logo.jpg"
+    "composerIcon": "./skills/vibeco-developers/assets/vibe-co-logo.jpg",
+    "logo": "./skills/vibeco-developers/assets/vibe-co-logo.jpg"
   }
 }

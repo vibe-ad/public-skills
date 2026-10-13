@@ -1,0 +1,20 @@
+{
+  "name": "vibe-co",
+  "interface": {
+    "displayName": "Vibe.co"
+  },
+  "plugins": [
+    {
+      "name": "vibeco",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/vibe-ad/public-skills.git"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Developer Tools"
+    }
+  ]
+}

@@ -4,7 +4,7 @@ interface:
   icon_small: "./assets/vibe-co-logo.jpg"
   icon_large: "./assets/vibe-co-logo.jpg"
   brand_color: "#4F46E5"
-  default_prompt: "Use $vibeco to help me build a Vibe Developer Platform integration."
+  default_prompt: "Use $vibeco-developers to help me build a Vibe Developer Platform integration."
 
 policy:
   allow_implicit_invocation: true
