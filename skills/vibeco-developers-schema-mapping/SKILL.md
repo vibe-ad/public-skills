@@ -39,16 +39,9 @@ Treat sample payloads as possibly real customer data. Refer to fields by name, n
    | Reporting, insights, performance, cost | `createreport-1`, `getreport-1` |
 
    Each lives at `https://developers.vibe.co/reference/<page>.md` (docs pages under `/docs/`). If a page has moved, find it again through the index.
-3. Flatten each schema with the bundled script rather than reading nested JSON by eye:
-
-   ```bash
-   node ${CLAUDE_SKILL_DIR}/scripts/flatten-schema.mjs https://developers.vibe.co/reference/createstrategy-1.md
-   node ${CLAUDE_SKILL_DIR}/scripts/flatten-schema.mjs https://developers.vibe.co/reference/createstrategy-1.md StrategyCreate
-   ```
-
-   The first command lists the operation, its parameters, and its request and response schemas; the second prints one schema as a field table. If Node.js is unavailable, apply [references/reading-openapi.md](references/reading-openapi.md) to the OpenAPI JSON on the page by hand.
+3. Read [references/reading-openapi.md](references/reading-openapi.md), then read the OpenAPI JSON block on each page directly: the operation under `paths`, its request and response schemas under `components.schemas`, following every `$ref` and nested object down to its leaf fields.
 4. If a page you need cannot be fetched, say so, mark what depended on it "Not stated in schema", and add it to the open questions. Never fill it from memory.
-5. Record the URL of every page used and the API revision. Read [references/reading-openapi.md](references/reading-openapi.md) before classifying any field.
+5. Record the URL of every page used and the API revision (`info.version`).
 
 Map against the **request** schemas for writes and the **response** schemas for reads. They differ: a field can be writable under one name and returned under another, or returned but never writable.
 

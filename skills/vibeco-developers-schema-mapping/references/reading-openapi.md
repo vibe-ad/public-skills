@@ -6,6 +6,8 @@ Use these rules to classify every field. Each classification must point to a key
 
 Each reference page on `developers.vibe.co` embeds an OpenAPI JSON block under "OpenAPI definition". The operation is under `paths`, and the schemas it uses are under `components.schemas`. Follow every `$ref` to its component; the page only contains the components that operation uses.
 
+Read the `description` of the operation and of every schema before turning anything into an open question: it often states lifecycle behavior, such as the status a new object starts in or the actions that change it.
+
 ## Presence
 
 | Schema says | Classification |
