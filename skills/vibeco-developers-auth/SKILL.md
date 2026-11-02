@@ -1,12 +1,12 @@
 ---
 name: vibeco-developers-auth
-description: Implement Vibe Developer Platform authentication in a partner's code. Use when writing or debugging an OAuth Connection (Authorization Code flow with PKCE), the Client Credentials grant, token storage, refresh-token rotation, per-customer Client Credentials entered in the partner's product, mapping each Vibe authorization to the right tenant, or tests for any of these. NOT for creating or configuring the app in the Vibe dashboard (use vibeco-developers), NOT for the legacy X-API-Key header (use vibeco-developers-api-key-migration), and NOT for calling resource endpoints once a token exists (use vibeco-developers-api-client).
+description: Implement Vibe Developer Platform authentication in a partner's code. Use when writing or debugging an OAuth Connection (Authorization Code flow with PKCE), the Client Credentials grant, token storage, refresh-token rotation, per-customer Client Credentials entered in the partner's product, mapping each Vibe authorization to the right tenant, or tests for any of these. NOT for creating or configuring the app in the Vibe dashboard (use vibeco-developers-app-setup), NOT for the legacy X-API-Key header (use vibeco-developers-api-key-migration), and NOT for calling resource endpoints once a token exists (use vibeco-developers-api-client).
 license: MIT
 ---
 
 # Vibe authentication in code
 
-Implement how a partner's backend obtains, stores, and renews Vibe access tokens. The app must already exist; if it does not, or its authentication method is undecided, use `vibeco-developers` first.
+Implement how a partner's backend obtains, stores, and renews Vibe access tokens. The app must already exist; if it does not, or its authentication method is undecided, use `vibeco-developers-app-setup` first.
 
 <!-- shared-guardrails:start -->
 
