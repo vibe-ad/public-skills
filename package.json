@@ -9,6 +9,7 @@
   "scripts": {
     "build": "node scripts/build-packages.mjs",
     "check": "npm run validate",
+    "sync": "node scripts/sync-guardrails.mjs",
     "validate": "node scripts/validate-distribution.mjs"
   },
   "devDependencies": {
