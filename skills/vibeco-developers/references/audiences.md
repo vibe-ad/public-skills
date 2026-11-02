@@ -73,3 +73,7 @@ Before upserting an audience, creating a sync, uploading a batch, initiating a C
 - Expected lifecycle transition.
 
 Execute only after explicit confirmation. Never include an audience delete operation in the prepared plan or command.
+
+## Tests
+
+In code, cover with mocked HTTP: stable idempotency keys, ordered zero-based batch indexes, final-batch marking, and rejection of malformed digests before upload.
