@@ -1,6 +1,6 @@
 # API and CLI operations
 
-Use this reference for API discovery, basic reads, safe ad-hoc operations, and choosing between `vibeco` and direct REST.
+Use this reference for API discovery, basic reads, and safe ad-hoc operations with `vibeco`. For direct REST calls and application code, use the `vibeco-developers-api-client` skill.
 
 ## Discover before calling
 
@@ -39,26 +39,6 @@ Before forming the command, copy the exact operation name and parameter schema f
 - Do not run or provide ready-to-run deletion calls in this skill.
 - Successful output is JSON on stdout. CLI failures are structured on stderr with a non-zero exit code; report the safe classification without leaking credentials.
 
-## Direct REST baseline
-
-Every production resource request uses `https://api.vibe.co`, a Bearer token, and an explicitly pinned revision. Requests with JSON bodies also send `Content-Type: application/json`.
-
-When no implementation language or existing HTTP client has been chosen, use cURL as the default way to show the request contract. Treat it as a portable protocol example rather than an instruction to shell out from application code.
-
-```bash
-curl https://api.vibe.co/accounts \
-  -H "Authorization: Bearer $VIBE_ACCESS_TOKEN" \
-  -H "X-Vibe-Revision: $VIBE_API_REVISION"
-```
-
-Keep `VIBE_ACCESS_TOKEN` out of command output, committed files, and examples. Do not use `-v`, shell tracing, or copied request dumps around credentials.
-
-Resolve the scope an operation needs from its reference page or the documentation index entry instead of guessing; a `403` usually means the app or installation lacks it.
-
-The legacy `X-API-Key` header of the older Reporting API is being retired. When a partner still uses it, use the `vibeco-developers-api-key-migration` skill.
-
-List endpoints use basic `limit` and `offset` pagination where documented. Implement only the pagination needed for the request; this skill does not prescribe a generalized backfill or retry framework.
-
 ## Capability order
 
 Use this order when orienting a partner, while following the user's actual task:
@@ -72,7 +52,3 @@ Use this order when orienting a partner, while following the user's actual task:
 7. Impression tracking: use only if the current documentation index exposes the needed operation and schema; do not infer an endpoint from an older catalog.
 
 For reporting, the current docs describe asynchronous jobs, a maximum request window, terminal `READY` or `FAILED` states, and expiring signed download URLs. Re-fetch `reporting.md`, `createreport.md`, and `getreport.md` before implementing those details.
-
-## Error handling
-
-For a failed resource call, capture the HTTP status and Vibe `error.type`, and include `error.request_id` when escalating to Vibe. Treat `401` as missing, invalid, or expired authentication and `403` as insufficient scope. Do not log the Authorization header or raw sensitive request bodies.
