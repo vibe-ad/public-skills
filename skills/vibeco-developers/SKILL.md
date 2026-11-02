@@ -26,7 +26,7 @@ These rules are shared by every Vibe developer skill and take precedence over th
 
 Read only the references needed for the current task:
 
-- For choosing between OAuth and API key authentication, or for migrating from a legacy `X-API-Key`, read [references/choosing-an-app.md](references/choosing-an-app.md).
+- For choosing between OAuth and API key authentication, read [references/choosing-an-app.md](references/choosing-an-app.md).
 - For getting a Vibe account, creating or configuring an app, OAuth or Client Credentials, or scopes, read [references/app-setup.md](references/app-setup.md). Read it first whenever the partner has no Vibe account or app yet, before any API work.
 - For API discovery, `vibeco` usage, direct REST calls, or basic data retrieval, read [references/api-and-cli.md](references/api-and-cli.md).
 - For creating, populating, checking, or cancelling audience syncs, read [references/audiences.md](references/audiences.md).
@@ -35,6 +35,8 @@ Read only the references needed for the current task:
 Combine references only when the request genuinely spans those workflows.
 
 To map a partner's existing data model onto Vibe entities before coding, with a field-by-field table and batched open questions, use the `vibeco-developers-schema-mapping` skill.
+
+To migrate an integration off the legacy `X-API-Key` header, use the `vibeco-developers-api-key-migration` skill.
 
 ## Resolve the live contract
 

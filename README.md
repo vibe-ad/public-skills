@@ -28,6 +28,7 @@ API as it changes.
 | Skill | What it helps with |
 | --- | --- |
 | [`vibeco-developers`](skills/vibeco-developers) | The entry point for any Vibe Developer Platform task, which routes to the specialized skills when they fit. Covers choosing between OAuth and API key apps, creating and configuring a Vibe app, implementing OAuth, calling the API or the [`vibeco` CLI](https://github.com/vibe-ad/vibe-cli), and building reporting or audience integrations in an existing codebase. |
+| [`vibeco-developers-api-key-migration`](skills/vibeco-developers-api-key-migration) | Moving an integration off the legacy `X-API-Key` header onto a Developer Platform app and Bearer tokens. |
 | [`vibeco-developers-schema-mapping`](skills/vibeco-developers-schema-mapping) | Mapping your existing data model onto Vibe API entities and report metrics before you write integration code: a field-by-field table sourced from the live OpenAPI schema, the fields that belong to another entity or have no counterpart, starter code limited to confirmed fields, and one batched list of open questions. |
 
 Every skill carries the same guardrails block, maintained once in
@@ -69,7 +70,7 @@ of your agent.
 | --- | --- |
 | "Add Vibe OAuth with PKCE to our Express backend" | `vibeco-developers` |
 | "Set up a Client Credentials app for our server-to-server sync" | `vibeco-developers` |
-| "Our connector still sends `X-API-Key`, migrate it to the new API" | `vibeco-developers` |
+| "Our connector still sends `X-API-Key`, migrate it to the new API" | `vibeco-developers-api-key-migration` |
 | "Write a nightly job that loads Vibe campaign spend into our warehouse" | `vibeco-developers` |
 | "Push hashed customer emails from our Python service to a Vibe audience" | `vibeco-developers` |
 | "Here is our Prisma `Campaign` model, map it to the Vibe API before I write the connector" | `vibeco-developers-schema-mapping` |
@@ -94,6 +95,7 @@ public-skills/
 │   │   ├── references/
 │   │   ├── agents/openai.yaml
 │   │   └── assets/
+│   ├── vibeco-developers-api-key-migration/  # Legacy X-API-Key migration
 │   └── vibeco-developers-schema-mapping/   # Data model to Vibe API mapping
 │       ├── SKILL.md
 │       ├── references/
