@@ -1,10 +1,30 @@
-# Audience lifecycle
+---
+name: vibeco-developers-audiences
+description: Create, populate, check, or cancel Vibe audience syncs on the Vibe Developer Platform, from the terminal or in a partner's code. Use when a partner pushes customer lists or identifiers to a Vibe audience, upserts an audience by an external key, normalizes and hashes emails (HEM), sends API batches or a CSV upload, polls a sync, or validates match counts. NOT for deleting audiences, NOT for mapping a partner's audience model onto Vibe fields before coding (use vibeco-developers-schema-mapping), and NOT for advertisers choosing targeting for a campaign.
+license: MIT
+---
 
-Use this reference for listing, creating or upserting, populating, checking, and cancelling audiences. Audience deletion is intentionally excluded.
+# Vibe audience syncs
+
+Take partner audience data into Vibe safely: upsert the audience, run one sync through API batches or a CSV upload, and check that it actually matched. Audience deletion is intentionally out of scope.
+
+<!-- shared-guardrails:start -->
+
+## Guardrails
+
+These rules are shared by every Vibe developer skill and take precedence over the rest of this file.
+
+- **Live documentation over memory.** Fetch `https://developers.vibe.co/llms.txt` first, then the `.md` version of each page you rely on. Never guess operation IDs, request bodies, enum values, scopes, limits, or response shapes. When the docs are silent or carry an unresolved note, say so instead of filling the gap.
+- **No secrets in the conversation.** Never ask the user to paste, and never print, log, commit, or screenshot, a client secret, access token, refresh token, authorization code, or CLI credential file. Use environment-variable placeholders in examples and keep token exchanges server-side.
+- **Preview before every live write.** Authenticated reads may run when requested. Before any action that creates, changes, or submits something in Vibe, including creating an app, regenerating its secret, or submitting it for review, show the target account and advertiser, the operation, the request body without secrets, and the expected side effect, then wait for explicit confirmation. Code changes that implement a requested integration are not live writes.
+- **No deletion.** Do not run or provide a ready-to-run delete call, even when the API exposes one. Explain the boundary and point to the official documentation.
+- **Production only, isolated test data.** Use `https://api.vibe.co`. Test in a dedicated, clearly labeled advertiser of the partner's own account, never with customer data.
+- **Partner data is sensitive.** Do not echo audience identifiers, sample payload values, report downloads, or signed URLs. Refer to fields by name and use synthetic values in examples.
+<!-- shared-guardrails:end -->
 
 ## Resolve the current schemas
 
-Fetch `https://developers.vibe.co/llms.txt`, then read the live pages for:
+From the documentation index, read the live pages for:
 
 - Audience overview and list.
 - Create or upsert an audience.
@@ -15,7 +35,7 @@ Fetch `https://developers.vibe.co/llms.txt`, then read the live pages for:
 - HEM normalization.
 - Presigned CSV upload and create-from-upload when files are involved.
 
-When using `vibeco`, find the exact operations with `vibeco operations`, then inspect each with `vibeco describe` and `vibeco schemas`.
+To run these operations now from the terminal, use `vibeco` through `vibeco-developers-cli`. To call them from a partner's code, build on `vibeco-developers-api-client`, with tokens from `vibeco-developers-auth`.
 
 ## Lifecycle
 
@@ -32,7 +52,7 @@ At the time of authoring, Vibe documents one non-terminal sync per audience, exp
 
 ## Identifier preparation
 
-Treat audience records as sensitive. Hash or normalize locally before they enter logs, fixtures, command output, or chat.
+Hash or normalize audience records locally, before they enter logs, fixtures, command output, or chat.
 
 For hashed email:
 
@@ -60,7 +80,7 @@ When the user already has a suitable CSV or the payload is too large for conveni
 3. Use the returned file identifier to create and start the audience sync with a stable idempotency key.
 4. Poll and validate exactly as for API batches.
 
-Do not print the presigned target, form fields, identifiers, or CSV contents. Remove temporary local copies when the task no longer needs them.
+Do not print the presigned target, form fields, or CSV contents. Remove temporary local copies when the task no longer needs them.
 
 ## Live write preview
 
@@ -72,8 +92,10 @@ Before upserting an audience, creating a sync, uploading a batch, initiating a C
 - Idempotency key strategy.
 - Expected lifecycle transition.
 
-Execute only after explicit confirmation. Never include an audience delete operation in the prepared plan or command.
-
 ## Tests
 
 In code, cover with mocked HTTP: stable idempotency keys, ordered zero-based batch indexes, final-batch marking, and rejection of malformed digests before upload.
+
+## Handoff
+
+Report the audience and sync targeted, the ingestion path, the record count sent, the final sync state with matched count and targetable size, any HEM uncertainty, and any write still waiting for confirmation.

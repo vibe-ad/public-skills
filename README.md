@@ -33,6 +33,7 @@ API as it changes.
 | [`vibeco-developers-cli`](skills/vibeco-developers-cli) | Running Vibe operations now with the [`vibeco` CLI](https://github.com/vibe-ad/vibe-cli), and checking that it is installed and logged in. |
 | [`vibeco-developers-api-client`](skills/vibeco-developers-api-client) | Writing application code against the REST API: pinned revision, pagination, error handling, and revision migrations. |
 | [`vibeco-developers-api-key-migration`](skills/vibeco-developers-api-key-migration) | Moving an integration off the legacy `X-API-Key` header onto a Developer Platform app and Bearer tokens. |
+| [`vibeco-developers-audiences`](skills/vibeco-developers-audiences) | Creating, populating, checking, and cancelling audience syncs: HEM normalization, API batches, CSV uploads, and match validation. |
 | [`vibeco-developers-schema-mapping`](skills/vibeco-developers-schema-mapping) | Mapping your existing data model onto Vibe API entities and report metrics before you write integration code: a field-by-field table sourced from the live OpenAPI schema, the fields that belong to another entity or have no counterpart, starter code limited to confirmed fields, and one batched list of open questions. |
 
 Every skill carries the same guardrails block, maintained once in
@@ -77,7 +78,7 @@ of your agent.
 | "List my advertisers with `vibeco`" | `vibeco-developers-cli` |
 | "Our connector still sends `X-API-Key`, migrate it to the new API" | `vibeco-developers-api-key-migration` |
 | "Write a nightly job that loads Vibe campaign spend into our warehouse" | `vibeco-developers` |
-| "Push hashed customer emails from our Python service to a Vibe audience" | `vibeco-developers` |
+| "Push hashed customer emails from our Python service to a Vibe audience" | `vibeco-developers-audiences` |
 | "Here is our Prisma `Campaign` model, map it to the Vibe API before I write the connector" | `vibeco-developers-schema-mapping` |
 
 ## Repository structure
@@ -105,6 +106,7 @@ public-skills/
 │   ├── vibeco-developers-cli/          # vibeco CLI operations
 │   ├── vibeco-developers-api-client/   # REST client and revisions
 │   ├── vibeco-developers-api-key-migration/  # Legacy X-API-Key migration
+│   ├── vibeco-developers-audiences/    # Audience syncs
 │   └── vibeco-developers-schema-mapping/   # Data model to Vibe API mapping
 │       ├── SKILL.md
 │       ├── references/
