@@ -1,6 +1,6 @@
 ---
 name: vibeco-developers-api-key-migration
-description: Migrate a Vibe integration off the legacy X-API-Key header of the older Vibe Reporting API onto the Developer Platform, which uses Bearer tokens and the X-Vibe-Revision header. Use when a partner's code, config, or docs still send X-API-Key to Vibe, or when they ask how to replace their old Vibe reporting API key. Only the legacy X-API-Key is in scope. The Developer Platform's Client Credentials method, formerly also called "API key", is the replacement, not the thing to migrate. NOT for new integrations (use vibeco-developers).
+description: Migrate a Vibe integration off the legacy X-API-Key header of the older Vibe Reporting API onto the Developer Platform, which uses Bearer tokens and the X-Vibe-Revision header. Use when a partner's code, config, or docs still send X-API-Key to Vibe, or when they ask how to replace their old Vibe reporting API key. Only the legacy X-API-Key is in scope. The Developer Platform's Client Credentials method, formerly also called "API key", is the replacement, not the thing to migrate. NOT for new integrations (use vibeco-developers-app-setup).
 license: MIT
 ---
 
@@ -34,7 +34,7 @@ Client Credentials is one of the two methods to migrate to, never something to m
 
 1. Read `https://developers.vibe.co/docs/migration-guide-from-api-key.md`. It is the source of truth for the old-to-new mapping and any retirement date.
 2. Inventory every place the partner sends `X-API-Key` and every legacy endpoint it calls, without printing the key itself.
-3. Get a Developer Platform app: choose OAuth Connection or Client Credentials exactly as for a new app, with `vibeco-developers`.
+3. Get a Developer Platform app: choose OAuth Connection or Client Credentials exactly as for a new app, with `vibeco-developers-app-setup`.
 4. Implement token acquisition with `vibeco-developers-auth`.
 5. Replace the legacy calls with the endpoints the migration guide names, sending a Bearer token and a pinned `X-Vibe-Revision`, with `vibeco-developers-api-client`. Map response fields from the guide, and flag any field it leaves unmapped instead of assuming an equivalent.
 6. Cover the new calls with mocked tests, then compare one known period's results between the old and new paths in the dedicated test advertiser before switching over.
