@@ -1,12 +1,12 @@
 ---
 name: vibeco-developers-api-client
-description: Write application code against the Vibe Developer Platform REST API. Use when building or changing a Vibe API client in a partner's codebase, showing a portable cURL request, pinning the X-Vibe-Revision header, handling pagination or Vibe error envelopes, or migrating an integration to a newer published API revision. NOT for obtaining or refreshing tokens (use vibeco-developers), NOT for running operations now from the terminal (use vibeco-developers), and NOT for the legacy X-API-Key header (use vibeco-developers-api-key-migration).
+description: Write application code against the Vibe Developer Platform REST API. Use when building or changing a Vibe API client in a partner's codebase, showing a portable cURL request, pinning the X-Vibe-Revision header, handling pagination or Vibe error envelopes, or migrating an integration to a newer published API revision. NOT for obtaining or refreshing tokens (use vibeco-developers-auth), NOT for running operations now from the terminal (use vibeco-developers), and NOT for the legacy X-API-Key header (use vibeco-developers-api-key-migration).
 license: MIT
 ---
 
 # Vibe API client
 
-Call Vibe's resource endpoints from a partner's code with a pinned revision and safe error handling. Tokens come from the code built with `vibeco-developers`.
+Call Vibe's resource endpoints from a partner's code with a pinned revision and safe error handling. Tokens come from the code built with `vibeco-developers-auth`.
 
 <!-- shared-guardrails:start -->
 

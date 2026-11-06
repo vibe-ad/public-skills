@@ -1,0 +1,10 @@
+interface:
+  display_name: "Vibe authentication"
+  short_description: "Implement Vibe OAuth Connection and Client Credentials in code"
+  icon_small: "./assets/vibe-co-logo.jpg"
+  icon_large: "./assets/vibe-co-logo.jpg"
+  brand_color: "#4F46E5"
+  default_prompt: "Use $vibeco-developers-auth to add a Vibe OAuth Connection with PKCE and token refresh to this backend."
+
+policy:
+  allow_implicit_invocation: true
