@@ -24,12 +24,6 @@ These rules are shared by every Vibe developer skill and take precedence over th
 
 ## Route the request
 
-Read only the references needed for the current task:
-
-- For creating, populating, checking, or cancelling audience syncs, read [references/audiences.md](references/audiences.md).
-
-Combine references only when the request genuinely spans those workflows.
-
 To map a partner's existing data model onto Vibe entities before coding, with a field-by-field table and batched open questions, use the `vibeco-developers-schema-mapping` skill.
 
 To migrate an integration off the legacy `X-API-Key` header, use the `vibeco-developers-api-key-migration` skill.
@@ -41,6 +35,8 @@ To implement OAuth Connection or Client Credentials in code, including token sto
 When the partner has no Vibe account or app yet, must choose between OAuth Connection and Client Credentials, picks scopes, or submits the app for review, use the `vibeco-developers-app-setup` skill before any API work.
 
 To run a Vibe operation now with the `vibeco` CLI, or fix a missing or logged-out CLI, use the `vibeco-developers-cli` skill.
+
+To create, populate, check, or cancel an audience sync, use the `vibeco-developers-audiences` skill.
 
 ## Resolve the live contract
 
