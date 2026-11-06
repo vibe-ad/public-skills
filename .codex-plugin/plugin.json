@@ -14,14 +14,13 @@
     "developer-platform",
     "oauth",
     "advertising",
-    "reporting",
     "audiences"
   ],
   "skills": "./skills/",
   "interface": {
     "displayName": "Vibe Developer Platform",
     "shortDescription": "Build and operate Vibe partner integrations",
-    "longDescription": "Create Vibe apps, implement OAuth, use the API and vibeco CLI, and build reporting or audience integrations.",
+    "longDescription": "Create Vibe apps, implement OAuth Connection or Client Credentials, use the API and vibeco CLI, and build audience integrations.",
     "developerName": "Vibe.co",
     "category": "Developer Tools",
     "capabilities": [
@@ -33,11 +32,11 @@
     "termsOfServiceURL": "https://www.vibe.co/legal/terms-of-service",
     "defaultPrompt": [
       "Help me build a Vibe Developer Platform integration.",
-      "Add Vibe OAuth and reporting to this application.",
+      "Add a Vibe OAuth Connection to this application.",
       "Prepare a safe Vibe audience synchronization workflow."
     ],
     "brandColor": "#4F46E5",
-    "composerIcon": "./skills/vibeco-developers/assets/vibe-co-logo.jpg",
-    "logo": "./skills/vibeco-developers/assets/vibe-co-logo.jpg"
+    "composerIcon": "./skills/vibeco-developers-app-setup/assets/vibe-co-logo.jpg",
+    "logo": "./skills/vibeco-developers-app-setup/assets/vibe-co-logo.jpg"
   }
 }

@@ -18,7 +18,6 @@ const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const ROOT_REAL = realpathSync(ROOT);
 const SKILLS_ROOT = join(ROOT, "skills");
 const EVALS_ROOT = join(ROOT, "evals");
-const PRIMARY_SKILL = "vibeco-developers";
 const MAX_DESCRIPTION_LENGTH = 1024;
 const PLUGIN_NAME = "vibeco";
 const MARKETPLACE_NAME = "vibe-co";
@@ -144,8 +143,8 @@ function validateGuardrails(text, label, errors) {
 
 function validateSkills(errors) {
   const names = listSkillNames();
-  if (!names.includes(PRIMARY_SKILL)) {
-    errors.push(`missing skills/${PRIMARY_SKILL}`);
+  if (names.length === 0) {
+    errors.push("skills/ must contain at least one skill");
   }
   for (const name of names) {
     validateSkill(name, errors);

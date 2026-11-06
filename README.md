@@ -27,7 +27,6 @@ API as it changes.
 
 | Skill | What it helps with |
 | --- | --- |
-| [`vibeco-developers`](skills/vibeco-developers) | The entry point for any Vibe Developer Platform task, which routes to the specialized skills when they fit. Covers choosing between OAuth and API key apps, creating and configuring a Vibe app, implementing OAuth, calling the API or the [`vibeco` CLI](https://github.com/vibe-ad/vibe-cli), and building reporting or audience integrations in an existing codebase. |
 | [`vibeco-developers-app-setup`](skills/vibeco-developers-app-setup) | Getting a Vibe account, choosing between an OAuth Connection and a Client Credentials app, picking scopes, managing the client secret, and submitting the app for review. |
 | [`vibeco-developers-auth`](skills/vibeco-developers-auth) | Implementing authentication in code: OAuth Connection (Authorization Code with PKCE), Client Credentials, token storage and refresh, and per-customer Client Credentials. |
 | [`vibeco-developers-cli`](skills/vibeco-developers-cli) | Running Vibe operations now with the [`vibeco` CLI](https://github.com/vibe-ad/vibe-cli), and checking that it is installed and logged in. |
@@ -77,7 +76,6 @@ of your agent.
 | "Set up a Client Credentials app for our server-to-server sync" | `vibeco-developers-app-setup` |
 | "List my advertisers with `vibeco`" | `vibeco-developers-cli` |
 | "Our connector still sends `X-API-Key`, migrate it to the new API" | `vibeco-developers-api-key-migration` |
-| "Write a nightly job that loads Vibe campaign spend into our warehouse" | `vibeco-developers` |
 | "Push hashed customer emails from our Python service to a Vibe audience" | `vibeco-developers-audiences` |
 | "Here is our Prisma `Campaign` model, map it to the Vibe API before I write the connector" | `vibeco-developers-schema-mapping` |
 
@@ -96,12 +94,10 @@ public-skills/
 ├── shared/
 │   └── guardrails.md                   # Guardrails block copied into every skill
 ├── skills/
-│   ├── vibeco-developers/              # Apps, OAuth, API, CLI, reporting, audiences
+│   ├── vibeco-developers-app-setup/    # Account, app, scopes, review
 │   │   ├── SKILL.md
-│   │   ├── references/
 │   │   ├── agents/openai.yaml
 │   │   └── assets/
-│   ├── vibeco-developers-app-setup/    # Account, app, scopes, review
 │   ├── vibeco-developers-auth/         # OAuth Connection and Client Credentials in code
 │   ├── vibeco-developers-cli/          # vibeco CLI operations
 │   ├── vibeco-developers-api-client/   # REST client and revisions
@@ -114,8 +110,7 @@ public-skills/
 │       ├── agents/openai.yaml
 │       └── assets/
 ├── evals/
-│   ├── vibeco-developers.json          # Evaluation cases, at most one file per skill
-│   ├── vibeco-developers-schema-mapping.json
+│   ├── vibeco-developers-schema-mapping.json  # Evaluation cases, at most one file per skill
 │   └── files/                          # Fixtures used by the cases
 ├── scripts/                            # Validation and packaging
 ├── assets/                             # Repository assets (README logo)
