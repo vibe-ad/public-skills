@@ -26,7 +26,6 @@ These rules are shared by every Vibe developer skill and take precedence over th
 
 Read only the references needed for the current task:
 
-- For API discovery, `vibeco` usage, or basic data retrieval, read [references/api-and-cli.md](references/api-and-cli.md).
 - For creating, populating, checking, or cancelling audience syncs, read [references/audiences.md](references/audiences.md).
 
 Combine references only when the request genuinely spans those workflows.
@@ -40,6 +39,8 @@ To write application code against the REST API, show a cURL request, or pin or m
 To implement OAuth Connection or Client Credentials in code, including token storage and refresh, use the `vibeco-developers-auth` skill.
 
 When the partner has no Vibe account or app yet, must choose between OAuth Connection and Client Credentials, picks scopes, or submits the app for review, use the `vibeco-developers-app-setup` skill before any API work.
+
+To run a Vibe operation now with the `vibeco` CLI, or fix a missing or logged-out CLI, use the `vibeco-developers-cli` skill.
 
 ## Resolve the live contract
 
