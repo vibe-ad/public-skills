@@ -36,7 +36,7 @@ Client Credentials is one of the two methods to migrate to, never something to m
 2. Inventory every place the partner sends `X-API-Key` and every legacy endpoint it calls, without printing the key itself.
 3. Get a Developer Platform app: choose OAuth Connection or Client Credentials exactly as for a new app, with `vibeco-developers`.
 4. Implement token acquisition with `vibeco-developers`.
-5. Replace the legacy calls with the endpoints the migration guide names, sending a Bearer token and a pinned `X-Vibe-Revision`, with `vibeco-developers`. Map response fields from the guide, and flag any field it leaves unmapped instead of assuming an equivalent.
+5. Replace the legacy calls with the endpoints the migration guide names, sending a Bearer token and a pinned `X-Vibe-Revision`, with `vibeco-developers-api-client`. Map response fields from the guide, and flag any field it leaves unmapped instead of assuming an equivalent.
 6. Cover the new calls with mocked tests, then compare one known period's results between the old and new paths in the dedicated test advertiser before switching over.
 7. Remove the legacy key from configuration only once the new path is live, and tell the partner to stop using it.
 
