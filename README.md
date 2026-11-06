@@ -30,6 +30,11 @@ API as it changes.
 | [`vibeco-developers`](skills/vibeco-developers) | The entry point for any Vibe Developer Platform task, which routes to the specialized skills when they fit. Covers choosing between OAuth and API key apps, creating and configuring a Vibe app, implementing OAuth, calling the API or the [`vibeco` CLI](https://github.com/vibe-ad/vibe-cli), and building reporting or audience integrations in an existing codebase. |
 | [`vibeco-developers-schema-mapping`](skills/vibeco-developers-schema-mapping) | Mapping your existing data model onto Vibe API entities and report metrics before you write integration code: a field-by-field table sourced from the live OpenAPI schema, the fields that belong to another entity or have no counterpart, starter code limited to confirmed fields, and one batched list of open questions. |
 
+Every skill carries the same guardrails block, maintained once in
+[`shared/guardrails.md`](shared/guardrails.md): live documentation over memory,
+no secrets in the conversation, a preview before every live write, and no
+deletion.
+
 ## Install
 
 ### Claude Code
@@ -81,6 +86,8 @@ public-skills/
 │   └── plugin.json                     # Claude Code plugin
 ├── .codex-plugin/
 │   └── plugin.json                     # Codex plugin
+├── shared/
+│   └── guardrails.md                   # Guardrails block copied into every skill
 ├── skills/
 │   ├── vibeco-developers/              # Apps, OAuth, API, CLI, reporting, audiences
 │   │   ├── SKILL.md
@@ -94,7 +101,7 @@ public-skills/
 │       ├── agents/openai.yaml
 │       └── assets/
 ├── evals/
-│   ├── vibeco-developers.json          # Evaluation cases, one file per skill
+│   ├── vibeco-developers.json          # Evaluation cases, at most one file per skill
 │   ├── vibeco-developers-schema-mapping.json
 │   └── files/                          # Fixtures used by the cases
 ├── scripts/                            # Validation and packaging
@@ -117,8 +124,11 @@ npx skills add . --list
 npm run build
 ```
 
-`npm run check` validates the skill frontmatter, the plugin and marketplace
-manifests, the license, and the evaluation cases of every skill in `evals/<skill-name>.json`.
+`npm run check` validates the skill frontmatter, the shared guardrails block of
+every skill, the plugin and marketplace manifests, the license, and the
+evaluation cases in `evals/<skill-name>.json` for the skills that have them.
+After editing `shared/guardrails.md`, run `npm run sync` to copy it into every
+skill.
 `npm run build` creates `dist/vibeco-openai.zip` and
 `dist/vibeco-anthropic.zip`. CI runs the same checks on every change and
 attaches both archives to releases created from `v*` tags.

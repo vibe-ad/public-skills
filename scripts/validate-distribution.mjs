@@ -12,6 +12,8 @@ import { fileURLToPath } from "node:url";
 
 import { parse as parseYaml } from "yaml";
 
+import { GUARDRAILS_END, GUARDRAILS_START, readGuardrails } from "./guardrails.mjs";
+
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const ROOT_REAL = realpathSync(ROOT);
 const SKILLS_ROOT = join(ROOT, "skills");
@@ -118,11 +120,25 @@ function validateSkill(name, errors) {
     errors.push(`${label} license must be \`${LICENSE_ID}\``);
   }
 
+  validateGuardrails(text, label, errors);
+
   for (const match of text.matchAll(REFERENCE_LINK)) {
     const reference = match[1];
     if (reference !== undefined && !existsSync(join(skillRoot, reference))) {
       errors.push(`${label} references missing file: ${reference}`);
     }
+  }
+}
+
+function validateGuardrails(text, label, errors) {
+  const start = text.indexOf(GUARDRAILS_START);
+  const end = text.indexOf(GUARDRAILS_END);
+  if (start === -1 || end < start) {
+    errors.push(`${label} must contain the shared guardrails block; run \`npm run sync\``);
+    return;
+  }
+  if (text.slice(start, end + GUARDRAILS_END.length) !== readGuardrails()) {
+    errors.push(`${label} guardrails differ from shared/guardrails.md; run \`npm run sync\``);
   }
 }
 
@@ -334,8 +350,11 @@ function validateEvals(skillNames, errors) {
       errors.push(`evals/${file} does not belong to any skill`);
     }
   }
-  for (const [file, skillName] of expectedFiles) {
-    validateEvalsFile(file, skillName, errors);
+  for (const file of actualFiles) {
+    const skillName = expectedFiles.get(file);
+    if (skillName !== undefined) {
+      validateEvalsFile(file, skillName, errors);
+    }
   }
 }
 
