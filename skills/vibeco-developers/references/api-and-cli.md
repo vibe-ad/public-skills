@@ -55,7 +55,7 @@ Keep `VIBE_ACCESS_TOKEN` out of command output, committed files, and examples. D
 
 Resolve the scope an operation needs from its reference page or the documentation index entry instead of guessing; a `403` usually means the app or installation lacks it.
 
-The legacy `X-API-Key` header of the older Reporting API is being retired. When a partner still uses it, read the live migration guide and move them to a Bearer token; see [choosing-an-app.md](choosing-an-app.md).
+The legacy `X-API-Key` header of the older Reporting API is being retired. When a partner still uses it, use the `vibeco-developers-api-key-migration` skill.
 
 List endpoints use basic `limit` and `offset` pagination where documented. Implement only the pagination needed for the request; this skill does not prescribe a generalized backfill or retry framework.
 
